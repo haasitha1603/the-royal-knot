@@ -15,9 +15,26 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
     
-    # Database
+    # Database & Connection Pooling
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./royal_knot.db")
-    
+    DB_POOL_SIZE: int = int(os.getenv("DB_POOL_SIZE", "100"))
+    DB_MAX_OVERFLOW: int = int(os.getenv("DB_MAX_OVERFLOW", "450"))
+    DB_POOL_TIMEOUT: int = int(os.getenv("DB_POOL_TIMEOUT", "60"))
+
+    # Redis & Distributed Rate Limiting
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    RATE_LIMIT_ENABLED: bool = os.getenv("RATE_LIMIT_ENABLED", "true").lower() in ("true", "1", "yes")
+    RATE_LIMIT_LOGIN_ACCOUNT_MAX: int = int(os.getenv("RATE_LIMIT_LOGIN_ACCOUNT_MAX", "5"))
+    RATE_LIMIT_LOGIN_ACCOUNT_WINDOW: int = int(os.getenv("RATE_LIMIT_LOGIN_ACCOUNT_WINDOW", "300"))  # 5 attempts per 5 mins
+    RATE_LIMIT_LOGIN_IP_MAX: int = int(os.getenv("RATE_LIMIT_LOGIN_IP_MAX", "30"))
+    RATE_LIMIT_LOGIN_IP_WINDOW: int = int(os.getenv("RATE_LIMIT_LOGIN_IP_WINDOW", "60"))  # 30 per min
+    RATE_LIMIT_REGISTER_IP_MAX: int = int(os.getenv("RATE_LIMIT_REGISTER_IP_MAX", "5"))
+    RATE_LIMIT_REGISTER_IP_WINDOW: int = int(os.getenv("RATE_LIMIT_REGISTER_IP_WINDOW", "600"))  # 5 per 10 mins
+    RATE_LIMIT_AI_USER_MAX: int = int(os.getenv("RATE_LIMIT_AI_USER_MAX", "10"))
+    RATE_LIMIT_AI_USER_WINDOW: int = int(os.getenv("RATE_LIMIT_AI_USER_WINDOW", "60"))  # 10 per min
+    RATE_LIMIT_ADMIN_MAX: int = int(os.getenv("RATE_LIMIT_ADMIN_MAX", "60"))
+    RATE_LIMIT_ADMIN_WINDOW: int = int(os.getenv("RATE_LIMIT_ADMIN_WINDOW", "60"))  # 60 per min
+
     # AI Copilot Engine
     GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY", None)
 

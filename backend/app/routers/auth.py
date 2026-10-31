@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
@@ -10,6 +10,7 @@ from backend.app.database import get_db
 from backend.app.config import settings
 from backend.app.models.models import User, Vendor
 from backend.app.schemas.schemas import UserRegister, UserLogin, Token, UserResponse
+from backend.app.services.rate_limiter import limiter, rate_limit_ip
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -52,8 +53,20 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise HTTPException(status_code=400, detail="Inactive user account")
     return user
 
-@router.post("/register", response_model=Token)
-def register(user_in: UserRegister, db: Session = Depends(get_db)):
+@router.post(
+    "/register",
+    response_model=Token,
+    dependencies=[Depends(rate_limit_ip(
+        settings.RATE_LIMIT_REGISTER_IP_MAX,
+        settings.RATE_LIMIT_REGISTER_IP_WINDOW,
+        "register_ip_limit"
+    ))]
+)
+def register(
+    user_in: UserRegister,
+    request: Request,
+    db: Session = Depends(get_db)
+):
     existing_user = db.query(User).filter(User.email == user_in.email).first()
     if existing_user:
         raise HTTPException(
@@ -99,16 +112,40 @@ def register(user_in: UserRegister, db: Session = Depends(get_db)):
     }
 
 @router.post("/login", response_model=Token)
-def login(login_data: UserLogin, db: Session = Depends(get_db)):
+def login(
+    login_data: UserLogin,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """
+    High-Concurrency Rate-Limited Authentication Endpoint:
+    1. Pre-auth rate limit checks (IP limit + Account failure limit) executed
+       BEFORE database lookup and expensive CPU password hashing.
+    2. Failed attempts increment both IP and Account security counters.
+    3. Successful authentication clears the account failure counter.
+    4. Constant-time response without revealing email existence.
+    """
+    # 1. PRE-AUTH RATE LIMIT ENFORCEMENT
+    limiter.check_login_pre_auth(request, login_data.email)
+
+    # 2. User Lookup
     user = db.query(User).filter(User.email == login_data.email).first()
+
+    # 3. Secure Verification
     if not user or not verify_password(login_data.password, user.hashed_password):
+        # Record failed attempt against this IP and Account
+        limiter.record_login_failure(request, login_data.email)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Account is deactivated")
+
+    # 4. Successful Login: Clear account failure counter
+    limiter.record_login_success(request, login_data.email)
 
     access_token = create_access_token(
         data={"sub": user.id, "role": user.role, "email": user.email}

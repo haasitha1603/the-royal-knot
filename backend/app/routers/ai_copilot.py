@@ -7,9 +7,20 @@ from backend.app.models.models import Wedding
 from backend.app.schemas.schemas import AIQueryRequest, AIQueryResponse
 from backend.app.services.ai_service import AIService
 
+from backend.app.config import settings
+from backend.app.services.rate_limiter import rate_limit_user
+
 router = APIRouter(prefix="/ai", tags=["AI Wedding Copilot"])
 
-@router.post("/query", response_model=AIQueryResponse)
+@router.post(
+    "/query",
+    response_model=AIQueryResponse,
+    dependencies=[Depends(rate_limit_user(
+        settings.RATE_LIMIT_AI_USER_MAX,
+        settings.RATE_LIMIT_AI_USER_WINDOW,
+        "ai_requests_limit"
+    ))]
+)
 def query_copilot(
     payload: AIQueryRequest,
     db: Session = Depends(get_db)

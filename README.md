@@ -138,7 +138,34 @@ npm run build
 
 ---
 
-## 7. Continuous Integration (CI)
+## 7. Performance, Rate Limiting & 500-User Load Testing (Section 20)
+
+Royal Knot incorporates an enterprise-grade performance and cybersecurity architecture tested under **500 simultaneous login attempts**:
+
+- **Redis-Backed Sliding-Window Rate Limiting**: Distributed rate-limiting via atomic Redis sorted sets with thread-safe in-memory fallback.
+- **Pre-Authentication Defense**: Evaluates IP limits (30/min) and failed account limits (5/5min) before executing DB queries or bcrypt hashing (~80–150ms saved per rejected request).
+- **High-Concurrency Connection Pooling**: SQLAlchemy `QueuePool` (100 pool, 450 max overflow) with SQLite WAL mode and 15s busy timeout.
+- **Reproducible Locust Suite**: Dedicated benchmark directory `load-tests/` with 6 production scenarios and telemetry collection.
+
+### Quick Start: Reproducing the 500-User Load Test
+```bash
+# 1. Seed 500 distinct load-test accounts in < 1 second:
+python load-tests/seed_load_users.py
+
+# 2. Run the 500 concurrent user login benchmark:
+python load-tests/run_load_test.py --scenario login --users 500 --spawn-rate 50 --duration 20s
+
+# 3. Run all 6 load-test scenarios (Login, Spike, Brute-Force, Multi-Role, Mixed, Sustained):
+python load-tests/run_load_test.py --all --users 250 --spawn-rate 50 --duration 15s
+
+# 4. Optional teardown of load-test accounts:
+python load-tests/seed_load_users.py --clean
+```
+Detailed benchmark results and architectural documentation: [`docs/performance-and-load-testing.md`](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/docs/performance-and-load-testing.md).
+
+---
+
+## 8. Continuous Integration (CI)
 
 A full CI workflow is active at [`.github/workflows/ci.yml`](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/.github/workflows/ci.yml) validating:
 1. Automated backend setup, dependency caching, and SQLite seeding.
@@ -147,6 +174,6 @@ A full CI workflow is active at [`.github/workflows/ci.yml`](file:///c:/Users/ha
 
 ---
 
-## 8. License
+## 9. License
 
 Developed for hackathon evaluation and production demonstration. All proprietary luxury wedding workflows, brand assets, and designs belong to The Royal Knot.

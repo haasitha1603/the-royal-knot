@@ -28,6 +28,8 @@ wheels/
 
 # SQLite & local databases
 *.db
+*.db-wal
+*.db-shm
 *.sqlite
 *.sqlite3
 royal_knot.db

@@ -8,10 +8,20 @@ from backend.app.models.models import (
     User, Vendor, Wedding, Complaint, PrivacyRequest, PaymentRecord, AuditLog
 )
 from backend.app.routers.auth import get_current_user
+from backend.app.config import settings
 from backend.app.dependencies import require_role
 from backend.app.services.audit import AuditService
+from backend.app.services.rate_limiter import rate_limit_user
 
-router = APIRouter(prefix="/admin", tags=["Platform Administration & Analytics"])
+router = APIRouter(
+    prefix="/admin",
+    tags=["Platform Administration & Analytics"],
+    dependencies=[Depends(rate_limit_user(
+        settings.RATE_LIMIT_ADMIN_MAX,
+        settings.RATE_LIMIT_ADMIN_WINDOW,
+        "admin_requests_limit"
+    ))]
+)
 
 def require_admin(current_user: User = Depends(get_current_user)):
     if current_user.role != "admin":
