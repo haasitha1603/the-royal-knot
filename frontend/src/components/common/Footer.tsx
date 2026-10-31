@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Crown, Heart, Mail, Phone, MapPin, Clock, ShieldCheck, Sparkles } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, ShieldCheck, Sparkles } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -10,12 +10,21 @@ export const Footer: React.FC = () => {
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white border border-gold-400 flex items-center justify-center text-gold-700 shadow-sm">
-                <Crown className="w-5 h-5 text-gold-600" />
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-gold-400 flex items-center justify-center shadow-sm shrink-0">
+                <img
+                  src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+                  alt="The Royal Knot insignia"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <span className="font-serif text-2xl font-bold tracking-tight text-charcoal-800">
-                THE ROYAL KNOT
-              </span>
+              <div>
+                <span className="font-serif text-2xl font-bold tracking-tight text-charcoal-800 block">
+                  THE ROYAL KNOT
+                </span>
+                <span className="text-[8.5px] tracking-[0.3em] uppercase text-gold-700 font-medium block">
+                  Luxury Indian Weddings
+                </span>
+              </div>
             </Link>
 
             <p className="font-serif italic text-base text-charcoal-600 max-w-sm">
@@ -27,7 +36,7 @@ export const Footer: React.FC = () => {
             </p>
 
             <div className="flex items-center gap-2 pt-2 text-xs text-gold-700">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Verified Indian Wedding Marketplace & Escrow Protocol</span>
             </div>
           </div>
@@ -75,6 +84,11 @@ export const Footer: React.FC = () => {
               <li>
                 <Link to="/onboarding" className="hover:text-burgundy-700 transition-colors">
                   Plan a Wedding
+                </Link>
+              </li>
+              <li>
+                <Link to="/marriage-registration" className="hover:text-burgundy-700 transition-colors font-semibold text-burgundy-900">
+                  Marriage Registration
                 </Link>
               </li>
               <li>

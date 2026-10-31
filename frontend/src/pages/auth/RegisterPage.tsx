@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { Crown, Lock, Mail, User, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, User, Phone, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -52,8 +52,12 @@ export const RegisterPage: React.FC = () => {
       <div className="max-w-lg w-full mx-auto px-4">
         <div className="bg-white rounded-3xl border border-gold-300 p-8 sm:p-10 shadow-royal">
           <div className="text-center mb-6">
-            <div className="w-12 h-12 rounded-full bg-gold-50 border border-gold-400 flex items-center justify-center text-gold-700 mx-auto mb-3">
-              <Crown className="w-6 h-6 text-gold-600" />
+            <div className="w-12 h-12 rounded-full overflow-hidden border border-gold-400 mx-auto mb-3 shadow-sm ring-4 ring-gold-50">
+              <img
+                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+                alt="The Royal Knot"
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-[10px] uppercase tracking-widest font-bold text-gold-700">
               The Royal Knot Registry
@@ -133,17 +137,19 @@ export const RegisterPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-charcoal-700 mb-1">Vendor Category</label>
+                  <label className="block font-semibold text-charcoal-700 mb-1">Category Specialization</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-gold-300 bg-ivory-50 text-charcoal-800"
                   >
-                    <option value="Caterers">Caterers & Royal Feasts</option>
+                    <option value="Caterers">Catering & Royal Feasts</option>
+                    <option value="Photographers">Photography & Heritage Cinema</option>
+                    <option value="Makeup">Bridal Makeup & Styling</option>
                     <option value="Decorators">Mandap & Floral Artistry</option>
-                    <option value="Photographers">Heritage Wedding Cinema</option>
+                    <option value="Entertainment">DJ, Shehnai & Symphony Entertainment</option>
+                    <option value="Pandits">Vedic Pandit & Sacred Rites</option>
                     <option value="Planners">Bespoke Wedding Planners</option>
-                    <option value="Entertainment">Symphony, Shehnai & DJs</option>
                   </select>
                 </div>
               </>
@@ -187,7 +193,7 @@ export const RegisterPage: React.FC = () => {
               />
             </div>
 
-            {/* Form Consent Checkboxes (Section 13.3) */}
+            {/* Form Consent Checkboxes */}
             <div className="pt-2 space-y-2">
               <label className="flex items-start gap-2 cursor-pointer text-[11px] text-charcoal-600">
                 <input
@@ -208,7 +214,7 @@ export const RegisterPage: React.FC = () => {
               disabled={isSubmitting}
               className="w-full py-3.5 rounded-xl bg-burgundy-700 hover:bg-burgundy-800 text-white font-medium text-xs uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              <Crown className="w-3.5 h-3.5 text-gold-300" />
+              <Sparkles className="w-3.5 h-3.5 text-gold-300" />
               <span>{isSubmitting ? 'Registering...' : 'Register Royal Account'}</span>
             </button>
           </form>

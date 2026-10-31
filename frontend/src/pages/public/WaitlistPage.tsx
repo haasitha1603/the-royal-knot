@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Crown, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export const WaitlistPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,8 +17,12 @@ export const WaitlistPage: React.FC = () => {
     <div className="bg-ivory min-h-screen py-16 flex items-center justify-center">
       <div className="max-w-xl w-full mx-auto px-4">
         <div className="bg-white rounded-3xl border border-gold-300 p-8 sm:p-10 shadow-royal text-center">
-          <div className="w-14 h-14 rounded-full bg-gold-50 border border-gold-400 flex items-center justify-center text-gold-700 mx-auto mb-4 ring-8 ring-gold-50">
-            <Crown className="w-7 h-7 text-gold-600" />
+          <div className="w-14 h-14 rounded-full overflow-hidden border border-gold-400 mx-auto mb-4 shadow-sm ring-8 ring-gold-50">
+            <img
+              src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+              alt="The Royal Knot"
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <span className="text-xs uppercase tracking-widest font-bold text-burgundy-700 bg-burgundy-50 px-3 py-1 rounded-full border border-burgundy-200">
@@ -104,8 +108,12 @@ export const ThankYouPage: React.FC = () => {
     <div className="bg-ivory min-h-screen py-20 flex items-center justify-center">
       <div className="max-w-lg w-full mx-auto px-4 text-center">
         <div className="bg-white rounded-3xl border border-gold-300 p-8 sm:p-12 shadow-royal">
-          <div className="w-16 h-16 rounded-full bg-gold-50 border-2 border-gold-400 flex items-center justify-center text-gold-700 mx-auto mb-6 ring-8 ring-gold-100/50">
-            <Crown className="w-8 h-8 text-gold-600" />
+          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-400 mx-auto mb-6 shadow-sm ring-8 ring-gold-100/50">
+            <img
+              src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+              alt="The Royal Knot"
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <p className="text-xs uppercase tracking-widest font-bold text-gold-600 mb-1">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Crown, Lock, Mail, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { Lock, Mail, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,8 +46,12 @@ export const LoginPage: React.FC = () => {
         <div className="bg-white rounded-3xl border border-gold-300 p-8 sm:p-10 shadow-royal">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-full bg-gold-50 border border-gold-400 flex items-center justify-center text-gold-700 mx-auto mb-3">
-              <Crown className="w-6 h-6 text-gold-600" />
+            <div className="w-12 h-12 rounded-full overflow-hidden border border-gold-400 mx-auto mb-3 shadow-sm ring-4 ring-gold-50">
+              <img
+                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+                alt="The Royal Knot"
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-[10px] uppercase tracking-widest font-bold text-gold-700">
               The Royal Knot Portal
@@ -143,7 +147,7 @@ export const LoginPage: React.FC = () => {
               disabled={isSubmitting}
               className="w-full py-3.5 rounded-xl bg-burgundy-700 hover:bg-burgundy-800 text-white font-medium text-xs uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              <Crown className="w-3.5 h-3.5 text-gold-300" />
+              <Sparkles className="w-3.5 h-3.5 text-gold-300" />
               <span>{isSubmitting ? 'Authenticating...' : 'Sign In to Foyer'}</span>
             </button>
           </form>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Crown, Sparkles, CheckCircle2, Shield, ArrowRight, FileCheck, Users, Clock, Layers } from 'lucide-react';
+import { Sparkles, CheckCircle2, Shield, ArrowRight, FileCheck, Users, Clock, Layers, HeartHandshake } from 'lucide-react';
 
 export const HowItWorksPage: React.FC = () => {
   const steps = [
@@ -8,7 +8,7 @@ export const HowItWorksPage: React.FC = () => {
       num: '01',
       title: 'Define Your Vision & Traditions',
       desc: 'Complete our guided couple onboarding. Enter auspicious muhurats, ceremony styles (Hindu, Sikh, Muslim, Christian, Jain, or Interfaith), estimated guest counts, and budgetary goals.',
-      icon: Crown
+      icon: HeartHandshake
     },
     {
       num: '02',

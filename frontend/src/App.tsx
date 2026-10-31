@@ -5,6 +5,7 @@ import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
 import { CurtainEntrance } from './components/ui/CurtainEntrance';
 import { CookieConsentBanner } from './components/ui/CookieConsentBanner';
+import { AIWeddingAssistant } from './components/ui/AIWeddingAssistant';
 
 // Public Pages
 import { HomePage } from './pages/public/HomePage';
@@ -15,6 +16,7 @@ import { HowItWorksPage } from './pages/public/HowItWorksPage';
 import { FAQsPage } from './pages/public/FAQsPage';
 import { ContactPage } from './pages/public/ContactPage';
 import { LegalPages } from './pages/public/LegalPages';
+import { MarriageRegistrationPage } from './pages/public/MarriageRegistrationPage';
 import { WaitlistPage, ThankYouPage } from './pages/public/WaitlistPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage, ForgotPasswordPage, NotFoundPage } from './pages/auth/RegisterPage';
@@ -33,7 +35,7 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-ivory selection:bg-gold-200 selection:text-burgundy-900">
-      {/* First-time Fabric Curtain Entrance (Section 3.1) */}
+      {/* First-time Fabric Curtain Entrance (Section 3.1 & Redesign) */}
       <CurtainEntrance forceShow={showCurtain} onEnter={() => setShowCurtain(false)} />
 
       {/* Global Navigation Bar */}
@@ -47,6 +49,7 @@ function AppContent() {
           <Route path="/venues" element={<VenuesPage />} />
           <Route path="/vendors" element={<VendorsPage />} />
           <Route path="/destination" element={<DestinationPage />} />
+          <Route path="/marriage-registration" element={<MarriageRegistrationPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/faqs" element={<FAQsPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -83,7 +86,10 @@ function AppContent() {
       {/* Global Footer */}
       <Footer />
 
-      {/* Cookie Consent Banner (Section 13.2) */}
+      {/* Real AI Wedding Concierge Floating Assistant */}
+      <AIWeddingAssistant />
+
+      {/* Cookie Consent Banner */}
       <CookieConsentBanner />
     </div>
   );

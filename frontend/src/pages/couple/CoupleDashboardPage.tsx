@@ -13,7 +13,6 @@ import { RoyalLoader } from '../../components/ui/RoyalLoader';
 import { SimulatedPaymentModal } from '../../components/ui/SimulatedPaymentModal';
 import { SignaturePad } from '../../components/ui/SignaturePad';
 import {
-  Crown,
   Heart,
   Calendar,
   Users,
@@ -23,14 +22,13 @@ import {
   Clock,
   Sparkles,
   ArrowRight,
-  ChevronRight,
   TrendingUp,
   FileText,
   AlertTriangle,
   Receipt,
-  UserCheck,
-  Building,
-  ChefHat
+  RotateCcw,
+  ChefHat,
+  Info
 } from 'lucide-react';
 
 export const CoupleDashboardPage: React.FC = () => {
@@ -43,10 +41,16 @@ export const CoupleDashboardPage: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Extra Guests Simulation State (+60 guests demonstration)
+  // Guest Impact Simulator State
+  const BASE_GUESTS = 400;
   const [extraGuestCount, setExtraGuestCount] = useState(60);
+  const [applyToReception, setApplyToReception] = useState(true);
+  const [applyToPheras, setApplyToPheras] = useState(true);
+  const [applyToSangeet, setApplyToSangeet] = useState(false);
+  const [applyToHaldi, setApplyToHaldi] = useState(false);
   const [simulatedImpact, setSimulatedImpact] = useState<any | null>(null);
   const [changeRequestStatus, setChangeRequestStatus] = useState<string | null>(null);
+  const [showApplyConfirmModal, setShowApplyConfirmModal] = useState(false);
 
   // Active Modals
   const [activePaymentForModal, setActivePaymentForModal] = useState<PaymentRecord | null>(null);
@@ -80,21 +84,43 @@ export const CoupleDashboardPage: React.FC = () => {
     loadDashboardData();
   }, [activeWeddingId]);
 
-  // Simulate extra 60 guests impact
-  const handleSimulateGuests = async () => {
-    try {
-      const data = await api.simulateExtraGuests(activeWeddingId, {
-        additional_guests: extraGuestCount,
-        catering_price_per_plate: 2800.0
-      });
-      setSimulatedImpact(data);
-    } catch (err) {
-      console.error('Simulation error:', err);
-    }
+  // Real-time calculation effect whenever extraGuestCount or functions change
+  useEffect(() => {
+    // Number of selected functions for catering impact
+    const funcCount = [applyToReception, applyToPheras, applyToSangeet, applyToHaldi].filter(Boolean).length || 1;
+    const pricePerPlate = 2800;
+    const cateringSubtotal = extraGuestCount * pricePerPlate * (funcCount >= 2 ? 1.5 : 1.0);
+    const cateringGst = cateringSubtotal * 0.18;
+    const seatingTableware = extraGuestCount * 650;
+    const favorsAmenities = extraGuestCount * 500;
+    const totalImpact = cateringSubtotal + cateringGst + seatingTableware + favorsAmenities;
+
+    setSimulatedImpact({
+      additional_guests: extraGuestCount,
+      new_total_guests: (wedding?.estimated_guests || BASE_GUESTS) + extraGuestCount,
+      cost_breakdown: {
+        catering_subtotal: cateringSubtotal,
+        catering_gst_18pct: cateringGst,
+        seating_and_tableware: seatingTableware,
+        guest_favors_and_amenities: favorsAmenities,
+        total_estimated_impact: totalImpact
+      },
+      capacity_warning: ((wedding?.estimated_guests || BASE_GUESTS) + extraGuestCount) > 420
+    });
+  }, [extraGuestCount, applyToReception, applyToPheras, applyToSangeet, applyToHaldi, wedding?.estimated_guests]);
+
+  // Reset Simulator
+  const handleResetSimulator = () => {
+    setExtraGuestCount(60);
+    setApplyToReception(true);
+    setApplyToPheras(true);
+    setApplyToSangeet(false);
+    setApplyToHaldi(false);
   };
 
   // Submit formal budget change request for extra guests
-  const handleRequestBudgetChange = async () => {
+  const handleExecuteChangeRequest = async () => {
+    setShowApplyConfirmModal(false);
     try {
       const res = await api.createBudgetChangeRequest(activeWeddingId, {
         additional_guests: extraGuestCount,
@@ -107,7 +133,7 @@ export const CoupleDashboardPage: React.FC = () => {
     }
   };
 
-  // Approve the budget change directly
+  // Authorize / Approve budget change directly
   const handleApproveBudgetChange = async () => {
     try {
       const requests = await api.getBudgetChangeRequests(activeWeddingId);
@@ -115,7 +141,6 @@ export const CoupleDashboardPage: React.FC = () => {
       if (pending) {
         await api.approveBudgetChangeRequest(pending.id);
         setChangeRequestStatus('approved');
-        // Refresh overview
         const refreshedBudget = await api.getBudgetOverview(activeWeddingId);
         const refreshedWedding = await api.getWedding(activeWeddingId);
         setBudgetOverview(refreshedBudget);
@@ -194,7 +219,7 @@ export const CoupleDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION A: INTELLIGENT CATERING QUOTATION COMPARISON (Section 5.7) */}
+        {/* SECTION A: INTELLIGENT CATERING QUOTATION COMPARISON */}
         <div className="bg-white rounded-3xl border border-gold-300 p-6 sm:p-8 shadow-royal">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-gold-200 mb-6">
             <div>
@@ -294,13 +319,13 @@ export const CoupleDashboardPage: React.FC = () => {
 
           <div className="p-3.5 rounded-xl bg-ivory-100 border border-gold-200 text-xs text-charcoal-600 flex items-center justify-between">
             <span className="italic">
-              <strong>Evaluation Result:</strong> Royal Mewar Caterers offers the optimal balance between high variety (18 live counters) and per-plate value with authentic Rajputana banquet execution.
+              <strong>Evaluation Result:</strong> Royal Mewar Caterers offers the optimal balance between variety (18 live counters) and per-plate value with authentic Rajputana banquet execution.
             </span>
             <span className="text-[11px] font-semibold text-gold-800">400 Guests Basis</span>
           </div>
         </div>
 
-        {/* SECTION B: BUDGET GUARDIAN & 60 EXTRA GUESTS SIMULATION (Section 5.9) */}
+        {/* SECTION B: BUDGET GUARDIAN & REPAIRED GUEST IMPACT SIMULATOR */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Budget Guardian Breakdown */}
           <div className="lg:col-span-2 bg-white rounded-3xl border border-gold-300 p-6 sm:p-8 shadow-royal">
@@ -358,62 +383,133 @@ export const CoupleDashboardPage: React.FC = () => {
             </div>
           </div>
 
-          {/* "+60 Extra Guests Impact Simulation" (Section 5.9 & 18) */}
+          {/* REPAIRED GUEST IMPACT SIMULATOR */}
           <div className="bg-white rounded-3xl border border-gold-300 p-6 shadow-royal flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-burgundy-700" />
-                <h3 className="font-serif text-xl font-bold text-charcoal-800">
-                  Guest Impact Simulator
-                </h3>
-              </div>
-              <p className="text-xs text-charcoal-500 mb-4">
-                Demonstrate what happens if 60 additional family guests attend the celebration.
-              </p>
-
-              <div className="bg-ivory-50 rounded-xl p-4 border border-gold-200 mb-4 space-y-3 text-xs">
-                <div>
-                  <label className="block text-[11px] font-semibold text-charcoal-600 mb-1">
-                    Additional Guests to Simulate
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="200"
-                    value={extraGuestCount}
-                    onChange={(e) => setExtraGuestCount(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-gold-300 bg-white text-charcoal-800 font-bold"
-                  />
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-burgundy-700" />
+                  <h3 className="font-serif text-xl font-bold text-charcoal-800">
+                    Guest Impact Simulator
+                  </h3>
                 </div>
-
                 <button
                   type="button"
-                  onClick={handleSimulateGuests}
-                  className="w-full py-2 rounded-lg bg-gold-600 hover:bg-gold-700 text-white font-semibold uppercase tracking-wider text-[11px] transition-colors"
+                  onClick={handleResetSimulator}
+                  className="inline-flex items-center gap-1 text-[11px] text-charcoal-500 hover:text-burgundy-700 underline font-medium"
+                  title="Reset to default baseline"
                 >
-                  Simulate Cost Impact
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Reset</span>
                 </button>
               </div>
 
+              <p className="text-xs text-charcoal-500 mb-4">
+                Calculate real-time cost & capacity escalations across catering, 18% GST, banquet seating, and gifts.
+              </p>
+
+              {/* Slider and Number Input */}
+              <div className="bg-ivory-50 rounded-2xl p-4 border border-gold-200 mb-4 space-y-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-charcoal-700">Additional Guests</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-burgundy-800 font-bold text-base">+{extraGuestCount}</span>
+                    <span className="text-charcoal-400">({(wedding?.estimated_guests || BASE_GUESTS) + extraGuestCount} Total)</span>
+                  </div>
+                </div>
+
+                <input
+                  type="range"
+                  min="0"
+                  max="150"
+                  step="5"
+                  value={extraGuestCount}
+                  onChange={(e) => setExtraGuestCount(parseInt(e.target.value) || 0)}
+                  className="w-full accent-burgundy-700 cursor-pointer"
+                />
+
+                {/* Target Functions Selection */}
+                <div className="pt-2 border-t border-gold-200/60">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal-500 mb-1.5">
+                    Impacted Ceremonies
+                  </label>
+                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={applyToReception}
+                        onChange={(e) => setApplyToReception(e.target.checked)}
+                        className="rounded text-burgundy-700 focus:ring-gold-400"
+                      />
+                      <span>Reception (Banquet)</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={applyToPheras}
+                        onChange={(e) => setApplyToPheras(e.target.checked)}
+                        className="rounded text-burgundy-700 focus:ring-gold-400"
+                      />
+                      <span>Sacred Pheras</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={applyToSangeet}
+                        onChange={(e) => setApplyToSangeet(e.target.checked)}
+                        className="rounded text-burgundy-700 focus:ring-gold-400"
+                      />
+                      <span>Sangeet Gala</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={applyToHaldi}
+                        onChange={(e) => setApplyToHaldi(e.target.checked)}
+                        className="rounded text-burgundy-700 focus:ring-gold-400"
+                      />
+                      <span>Haldi / Mehndi</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Real-time Breakdown */}
               {simulatedImpact && (
-                <div className="bg-amber-50 rounded-xl p-4 border border-amber-200 text-xs space-y-2 mb-4">
-                  <div className="flex justify-between font-bold text-amber-900 border-b border-amber-200 pb-1">
-                    <span>Projected Extra Cost:</span>
-                    <span>₹{simulatedImpact.cost_breakdown.total_estimated_impact.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="flex justify-between text-[11px] text-amber-800">
-                    <span>Catering (₹2,800 + 18% GST):</span>
-                    <span>₹{(simulatedImpact.cost_breakdown.catering_subtotal + simulatedImpact.cost_breakdown.catering_gst_18pct).toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="flex justify-between text-[11px] text-amber-800">
-                    <span>Seating & Gifts:</span>
-                    <span>₹{(simulatedImpact.cost_breakdown.seating_and_tableware + simulatedImpact.cost_breakdown.guest_favors_and_amenities).toLocaleString('en-IN')}</span>
+                <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200 text-xs space-y-2 mb-4">
+                  <div className="flex justify-between font-bold text-amber-950 border-b border-amber-200/80 pb-1.5">
+                    <span>Projected Extra Commitment:</span>
+                    <span className="font-serif text-base text-burgundy-900">
+                      ₹{simulatedImpact.cost_breakdown.total_estimated_impact.toLocaleString('en-IN')}
+                    </span>
                   </div>
 
-                  <div className="pt-2 text-[11px] text-amber-900 leading-snug">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-700 inline mr-1" />
-                    <strong>Section 5.9 Rule:</strong> Budget cannot be changed silently. Requires authorized sign-off.
+                  <div className="space-y-1 text-[11px] text-amber-900">
+                    <div className="flex justify-between">
+                      <span>Catering Subtotal (₹2,800/plate):</span>
+                      <span>₹{simulatedImpact.cost_breakdown.catering_subtotal.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Mandatory 18% GST:</span>
+                      <span>₹{simulatedImpact.cost_breakdown.catering_gst_18pct.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Seating Rentals & China Tableware:</span>
+                      <span>₹{simulatedImpact.cost_breakdown.seating_and_tableware.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Welcome Favors & Amenities:</span>
+                      <span>₹{simulatedImpact.cost_breakdown.guest_favors_and_amenities.toLocaleString('en-IN')}</span>
+                    </div>
                   </div>
+
+                  {/* Capacity Warning */}
+                  {simulatedImpact.capacity_warning && (
+                    <div className="mt-3 p-2.5 rounded-xl bg-red-100 border border-red-300 text-[11px] text-red-900 leading-snug">
+                      <AlertTriangle className="w-3.5 h-3.5 text-red-700 inline mr-1" />
+                      <strong>Capacity Limit Exceeded:</strong> {simulatedImpact.new_total_guests} guests exceeds the Rambagh Ballroom standard capacity of 420. Supplemental garden marquee required.
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -422,7 +518,7 @@ export const CoupleDashboardPage: React.FC = () => {
               {changeRequestStatus === 'pending' ? (
                 <div className="space-y-2">
                   <span className="block text-center py-2 rounded-xl bg-amber-100 text-amber-900 font-semibold text-xs border border-amber-200">
-                    Request Pending Approval
+                    Request #{Date.now().toString().slice(-4)} Pending Approval
                   </span>
                   <button
                     type="button"
@@ -439,18 +535,17 @@ export const CoupleDashboardPage: React.FC = () => {
               ) : (
                 <button
                   type="button"
-                  disabled={!simulatedImpact}
-                  onClick={handleRequestBudgetChange}
-                  className="w-full py-2.5 rounded-xl bg-burgundy-700 hover:bg-burgundy-800 text-white font-semibold text-xs uppercase tracking-wider transition-colors shadow-sm disabled:opacity-50"
+                  onClick={() => setShowApplyConfirmModal(true)}
+                  className="w-full py-2.5 rounded-xl bg-burgundy-700 hover:bg-burgundy-800 text-white font-semibold text-xs uppercase tracking-wider transition-colors shadow-sm"
                 >
-                  Create Formal Change Request (+60 Guests)
+                  Apply Changes (+{extraGuestCount} Guests)
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* SECTION C: STAGED PAYMENTS TRACKING (Section 5.10 & 6.6) */}
+        {/* SECTION C: STAGED PAYMENTS TRACKING */}
         <div className="bg-white rounded-3xl border border-gold-300 p-6 sm:p-8 shadow-royal">
           <div className="flex items-center justify-between pb-4 border-b border-gold-200 mb-6">
             <div>
@@ -521,7 +616,7 @@ export const CoupleDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION D: DIGITAL SERVICE CONTRACT & SIGNATURE PAD (Section 6.3) */}
+        {/* SECTION D: DIGITAL SERVICE CONTRACT & SIGNATURE PAD */}
         <div className="bg-white rounded-3xl border border-gold-300 p-6 sm:p-8 shadow-royal">
           <div className="flex items-center justify-between pb-4 border-b border-gold-200 mb-6">
             <div>
@@ -566,7 +661,60 @@ export const CoupleDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Simulated Payment Modal */}
+        {/* Confirmation Modal for Guest Change Request */}
+        {showApplyConfirmModal && simulatedImpact && (
+          <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-charcoal-900/60 backdrop-blur-sm">
+            <div className="relative w-full max-w-md rounded-3xl bg-white border border-gold-300 shadow-royal-lg p-6 space-y-4">
+              <div className="flex items-center gap-3 border-b border-gold-200 pb-3">
+                <div className="w-10 h-10 rounded-xl bg-burgundy-50 border border-burgundy-200 flex items-center justify-center text-burgundy-800">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-charcoal-900">Confirm Guest Change</h3>
+                  <p className="text-xs text-charcoal-500">Formal Budget Escalation Notice</p>
+                </div>
+              </div>
+
+              <div className="text-xs text-charcoal-600 space-y-2">
+                <p>
+                  You are submitting a formal request to add <strong>+{extraGuestCount} guests</strong> to the wedding roster (Total: <strong>{simulatedImpact.new_total_guests} guests</strong>).
+                </p>
+                <div className="p-3 rounded-xl bg-ivory-100 border border-gold-200 space-y-1">
+                  <div className="flex justify-between">
+                    <span>Projected Budget Increment:</span>
+                    <span className="font-bold text-burgundy-900">₹{simulatedImpact.cost_breakdown.total_estimated_impact.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between text-[11px] text-charcoal-500">
+                    <span>Includes:</span>
+                    <span>Catering, 18% GST, Tableware & Favors</span>
+                  </div>
+                </div>
+                <p className="text-[11px] italic text-charcoal-500">
+                  In compliance with Section 5.9, budgets cannot be altered silently. Once submitted, your assigned wedding planner (Ananya Sharma) will review venue capacities and issue authorization.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowApplyConfirmModal(false)}
+                  className="px-4 py-2 rounded-xl border border-gold-300 text-charcoal-600 text-xs font-semibold hover:bg-ivory-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExecuteChangeRequest}
+                  className="px-5 py-2 rounded-xl bg-burgundy-700 hover:bg-burgundy-800 text-white text-xs font-semibold uppercase tracking-wider shadow-sm"
+                >
+                  Confirm & Submit Request
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Enhanced Simulated Payment Modal */}
         {activePaymentForModal && (
           <SimulatedPaymentModal
             isOpen={true}
@@ -576,11 +724,9 @@ export const CoupleDashboardPage: React.FC = () => {
             amount={activePaymentForModal.amount}
             invoiceNumber={activePaymentForModal.invoice_number || 'INV-TRK-2026-092'}
             onPaymentSuccess={async (res) => {
-              // Settle in backend
               await api.simulatePaymentSettlement(activePaymentForModal.id, {
                 payment_method: res.method
               });
-              // Refresh
               const refreshedPayments = await api.getPayments(activeWeddingId);
               const refreshedBudget = await api.getBudgetOverview(activeWeddingId);
               setPayments(refreshedPayments);

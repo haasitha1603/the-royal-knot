@@ -2,21 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
-  Crown,
   Menu,
   X,
   Sparkles,
-  User,
   LogOut,
   ChevronDown,
-  Compass,
-  Building,
-  Users,
-  Calendar,
   LayoutDashboard,
-  Shield,
-  HelpCircle,
-  Phone
+  HeartHandshake
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -98,16 +90,20 @@ export const Navbar: React.FC = () => {
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gold-100 via-gold-50 to-ivory-100 border border-gold-400 flex items-center justify-center text-gold-700 shadow-sm group-hover:scale-105 transition-transform ring-4 ring-gold-50">
-              <Crown className="w-6 h-6 text-gold-600 drop-shadow-sm" />
+          {/* Brand Logo with Bride & Groom Wedding Photography Icon */}
+          <Link to="/" className="flex items-center gap-3.5 group">
+            <div className="w-11 h-11 rounded-full overflow-hidden border border-gold-400/80 shadow-sm group-hover:scale-105 transition-transform ring-4 ring-gold-50/80 shrink-0">
+              <img
+                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+                alt="The Royal Knot - Bride and Groom Hands Holding"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <span className="font-serif text-2xl font-bold tracking-tight text-charcoal-800 block group-hover:text-burgundy-800 transition-colors">
                 THE ROYAL KNOT
               </span>
-              <span className="text-[10px] tracking-[0.25em] uppercase text-gold-600 font-semibold block -mt-1">
+              <span className="text-[8.5px] tracking-[0.3em] uppercase text-gold-700/80 font-medium block mt-0.5">
                 Luxury Indian Weddings
               </span>
             </div>
@@ -146,6 +142,14 @@ export const Navbar: React.FC = () => {
               }`}
             >
               Destinations
+            </Link>
+            <Link
+              to="/marriage-registration"
+              className={`hover:text-burgundy-700 transition-colors ${
+                isActive('/marriage-registration') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              Marriage Registration
             </Link>
             <Link
               to="/command-centre"
@@ -214,7 +218,7 @@ export const Navbar: React.FC = () => {
                   to="/onboarding"
                   className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-burgundy-700 hover:bg-burgundy-800 text-white text-xs font-semibold uppercase tracking-wider shadow-sm transition-all border border-gold-400/40 hover:scale-105"
                 >
-                  <Crown className="w-3.5 h-3.5 text-gold-300" />
+                  <Sparkles className="w-3.5 h-3.5 text-gold-300" />
                   <span>Plan a Wedding</span>
                 </Link>
               </div>
@@ -226,6 +230,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-charcoal-600 hover:text-charcoal-900 hover:bg-ivory-200"
+              aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -263,6 +268,13 @@ export const Navbar: React.FC = () => {
             className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
           >
             Destination Weddings
+          </Link>
+          <Link
+            to="/marriage-registration"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
+          >
+            Marriage Registration
           </Link>
           <Link
             to="/command-centre"
