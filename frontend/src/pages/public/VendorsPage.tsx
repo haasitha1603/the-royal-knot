@@ -165,6 +165,8 @@ export const VendorsPage: React.FC = () => {
                       <img
                         src={vendor.portfolio_urls_json[0] || 'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=800&q=80'}
                         alt={vendor.business_name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute top-3 left-3 flex gap-1.5">

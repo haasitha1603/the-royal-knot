@@ -86,6 +86,8 @@ export const DestinationPage: React.FC = () => {
                     <img
                       src={dest.image}
                       alt={dest.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
                     <div className="absolute top-3 left-3 bg-white/95 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-charcoal-800 border border-gold-200">

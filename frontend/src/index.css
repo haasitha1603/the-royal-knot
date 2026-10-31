@@ -13,15 +13,27 @@
   }
 }
 
+@layer utilities {
+  .font-cursive, .font-hermiona {
+    font-family: 'Great Vibes', 'Alex Brush', 'Pinyon Script', cursive;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
 /* Luxury gold borders, metallic gradient highlights */
 .border-gold-gradient {
+  border-style: solid;
+  border-width: 1px;
   border-image: linear-gradient(to right, #C5A059, #F3E5AB, #C5A059) 1;
 }
 
 .text-gold-gradient {
   background: linear-gradient(135deg, #B38F30 0%, #D4AF37 50%, #8C6F23 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .bg-gold-gradient {
@@ -50,3 +62,4 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #B38F30;
 }
+

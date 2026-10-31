@@ -94,7 +94,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
           {/* Subtle Tag badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-50 border border-gold-300 text-gold-800 text-xs font-semibold uppercase tracking-widest mb-6 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-gold-600" />
-            <span>The Premier Indian Wedding Operations Ecosystem</span>
+            <span>Bespoke Indian Wedding Planning & Operations</span>
           </div>
 
           {/* Main Title */}
@@ -109,7 +109,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
           </p>
 
           <p className="text-sm sm:text-base text-charcoal-500 max-w-2xl mx-auto mb-10 leading-relaxed font-sans">
-            From imperial palace discovery in Rajasthan to AI-grounded quotation comparison, staged financial tracking, and a live minute-by-minute wedding day operations command centre.
+            Palace venue discovery, bespoke quotation intelligence, staged escrow milestones, and a live wedding day command centre.
           </p>
 
           {/* Hero CTAs */}
@@ -137,7 +137,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs text-charcoal-500 hover:text-gold-700 underline transition-colors"
                 title="View the ceremonial fabric entrance curtain"
               >
-                <span>Replay Entrance Curtain</span>
+                <span>Replay Curtain</span>
               </button>
             )}
           </div>
@@ -148,6 +148,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               <img
                 src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80"
                 alt="Imperial Indian Bride and Groom hands holding with wedding jewellery"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 via-transparent to-transparent flex items-end p-6">
@@ -162,6 +164,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               <img
                 src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80"
                 alt="Rambagh Palace Jaipur illuminated"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 via-transparent to-transparent flex items-end p-6">
@@ -176,6 +180,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               <img
                 src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
                 alt="Royal Wedding Banquet & Floral Architecture"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 via-transparent to-transparent flex items-end p-6">
@@ -200,7 +206,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-burgundy-50 border border-burgundy-200 text-burgundy-800 text-[11px] font-bold uppercase tracking-wider mb-2">
                 <HeartHandshake className="w-3.5 h-3.5 text-burgundy-700" />
-                <span>Wedding Progress Command</span>
+                <span>Active Celebration</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal-900">
                 {wedding?.couple_names || 'Aarav Singhania & Meera Kapoor'}
@@ -544,10 +550,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               Integrated Capabilities
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal-800 mt-3">
-              Not Just a Dashboard — An End-to-End Agency
+              An End-to-End Royal Wedding Platform
             </h2>
             <p className="text-sm text-charcoal-500 mt-2">
-              Combining digital curation, market transparency, and military-grade on-site operational synchrony.
+              Combining digital curation, market transparency, and seamless on-site operational harmony.
             </p>
           </div>
 
@@ -568,7 +574,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               </div>
               <h3 className="font-serif text-xl font-bold text-charcoal-800 mb-2">Quotation Intelligence</h3>
               <p className="text-xs text-charcoal-500 leading-relaxed">
-                Evaluate multi-vendor catering quotes on price-per-plate, live counters, waitstaff ratios, and hidden line items.
+                Evaluate multi-vendor catering quotes on price-per-plate, live counters, waitstaff ratios, and transparent line items.
               </p>
             </div>
 
@@ -578,7 +584,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               </div>
               <h3 className="font-serif text-xl font-bold text-charcoal-800 mb-2">Budget Guardian</h3>
               <p className="text-xs text-charcoal-500 leading-relaxed">
-                Dynamic cost modeling that estimates +60 extra guest impacts and halts unapproved budget escalations.
+                Dynamic cost modeling that simulates guest additions and halts unapproved budget escalations.
               </p>
             </div>
 
@@ -598,7 +604,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               </div>
               <h3 className="font-serif text-xl font-bold text-charcoal-800 mb-2">Command Centre</h3>
               <p className="text-xs text-charcoal-500 leading-relaxed">
-                Real-time minute-by-minute run of show. Simulate late vendor transit, identify cascades, and publish revisions.
+                Real-time minute-by-minute run of show, vendor milestone tracking, and operational coordination.
               </p>
             </div>
 
@@ -606,9 +612,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
               <div className="w-10 h-10 rounded-xl bg-gold-50 border border-gold-300 flex items-center justify-center text-gold-700 mb-4">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="font-serif text-xl font-bold text-charcoal-800 mb-2">Zero Dark Patterns</h3>
+              <h3 className="font-serif text-xl font-bold text-charcoal-800 mb-2">Verified & Transparent</h3>
               <p className="text-xs text-charcoal-500 leading-relaxed">
-                No fake timers, no fabricated reviews, transparent staged payment simulations, and rigorous GDPR/DPDP privacy deletion.
+                Transparent milestone pricing, genuine verified vendor credentials, secure digital contracts, and strict privacy protection.
               </p>
             </div>
           </div>

@@ -57,11 +57,15 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({ onEnter, force
           ========================================================================= */}
       <div
         className={`absolute inset-0 z-0 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-[#FFFDF9] via-[#FAF6EE] to-[#F5ECE0] transition-opacity duration-700 ${
-          phase === 'revealed' ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          phase === 'revealed' || phase === 'parting' ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
         {/* Single Corner Button: Visit Home Page */}
-        <div className="absolute top-6 right-6 sm:top-10 sm:right-10 z-20">
+        <div
+          className={`absolute top-6 right-6 sm:top-10 sm:right-10 z-20 transition-all duration-500 ${
+            phase === 'revealed' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+          }`}
+        >
           <button
             onClick={handleVisitHomePage}
             className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-burgundy-700 hover:bg-burgundy-800 text-white font-medium text-xs sm:text-sm uppercase tracking-widest shadow-royal border border-gold-400/50 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"

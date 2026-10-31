@@ -78,7 +78,7 @@ export const VenuesPage: React.FC = () => {
             Curated Heritage Wedding Venues
           </h1>
           <p className="text-xs sm:text-sm text-charcoal-500 leading-relaxed">
-            Discover majestic courtyards, Mughal gardens, and imperial banqueting halls across Rajasthan. All listings are clearly labelled and verified for royal celebrations.
+            Discover majestic courtyards, heritage gardens, and imperial banqueting halls across Rajasthan.
           </p>
         </div>
 
@@ -125,11 +125,8 @@ export const VenuesPage: React.FC = () => {
           <div className="px-6 py-3 bg-ivory-100 border-b border-gold-200 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-gold-600" />
-              <span className="font-semibold text-charcoal-800">Geographic Palace Map (OpenStreetMap)</span>
+              <span className="font-semibold text-charcoal-800">Geographic Palace Map</span>
             </div>
-            <span className="text-[11px] text-charcoal-500">
-              Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="underline hover:text-gold-700">OpenStreetMap contributors</a>
-            </span>
           </div>
 
           <div className="h-72 w-full z-0">
@@ -191,6 +188,8 @@ export const VenuesPage: React.FC = () => {
                   <img
                     src={venue.images_json[0] || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'}
                     alt={venue.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute top-4 left-4 flex gap-2">
