@@ -1,162 +1,152 @@
 # The Royal Knot
-### Premium Indian Wedding Planning, Marketplace & Operations Management Platform
+### Production-Grade Luxury Indian Wedding Planning, Marketplace & Operations Management Platform
 
 > **“Every detail connected. Every moment managed. Every wedding unforgettable.”**
+
+[![CI Pipeline](https://github.com/the-royal-knot/the-royal-knot/actions/workflows/ci.yml/badge.svg)](https://github.com/the-royal-knot/the-royal-knot/actions/workflows/ci.yml)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18.3+-61DAFB.svg?logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5+-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4+-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
 ---
 
 ## 1. Overview & Vision
 
-**The Royal Knot** is a cohesive, production-minded digital wedding agency, curated marketplace, and real-time operations command platform built specifically for Indian and international destination weddings.
+**The Royal Knot** is an enterprise-grade digital wedding agency, curated luxury marketplace, and real-time operations command platform engineered specifically for high-stakes Indian destination weddings across Rajasthan's palace circuit (Jaipur, Udaipur, Jodhpur).
 
-It bridges the gap between romantic grandeur and operational execution:
-1. **Premium Digital Wedding Agency:** Auspicious muhurat timing, multi-function ceremony planning (Haldi, Mehendi, Sangeet, Vedic Pheras, Grand Reception), and tradition-informed workflows.
-2. **Curated Indian Wedding Marketplace:** Verified heritage palaces in Rajasthan and coastal retreats, plus accredited catering, decor, cinema, and planning professionals.
-3. **Intelligent Quotation Comparison:** Rigorous multi-vendor evaluation comparing per-plate cost, live counter counts, tableware tiers (fine bone china vs. melamine), waitstaff ratios, and hidden surcharges.
-4. **Dynamic Budget Guardian:** Real-time expense modeling with automated calculation of +60 extra guest impacts requiring authorized sign-off.
-5. **Live Wedding Operations Command Centre:** Minute-by-minute run of show, delay simulation, cascade alerts, coordinator notifications, and published revisions.
-
----
-
-## 2. Branding & Design System
-
-The application strictly implements the required luxury Indian wedding design tokens:
-- **Primary Backgrounds:** White (`#FFFFFF`) and Ivory (`#FAF7F2`, `#FDFBF7`, `#F5EFEB`).
-- **Highlights & Accents:** Champagne and Metallic Gold (`#D4AF37`, `#C5A059`, `#E5C378`, `#B38F30`).
-- **Important Actions & CTAs:** Deep Burgundy and Traditional Wedding Red (`#800020`, `#9B111E`, `#67001A`).
-- **Readable Typography:** Charcoal and warm dark grey (`#2C2A29`, `#3D3A38`).
-- **Display Typography:** Cormorant Garamond & Playfair Display serif fonts; clean Outfit sans-serif for dashboard forms and tables.
-- **Zero Dark Dashboards:** Consistent ivory-and-gold luxury across all public and authenticated portals.
-
-### Signature Wedding Loading Experience
-Instead of generic spinners, The Royal Knot features a custom-crafted loader with **four solid, filled wedding silhouettes**:
-1. Indian Choker Haar (Wedding Necklace) — Metallic Gold
-2. Ceremonial Wedding Bells — Champagne
-3. Solitaire Diamond Band (Wedding Ring) — Deep Burgundy
-4. Traditional Bridal Kalire (Umbrella Silhouette with Dangling Droplets) — Wedding Red
-*Animated with a gentle, staggered sequential bounce respecting `prefers-reduced-motion`.*
-
-### Ceremonial Curtain Entrance
-On first visit, visitors encounter a full-screen white fabric-curtain experience with delicate gold borders that smoothly opens from the center, revealing the platform. State is saved in `localStorage`, and visitors can reopen the curtain anytime from the homepage.
+It bridges the gap between regal grandeur and software engineering depth:
+1. **Premium Multi-Role Ecosystem:** 4 tailored, authenticated portals for Couples, Wedding Planners, Vendors, and Platform Administrators.
+2. **Context-Aware AI Wedding Concierge:** Real-time conversational intelligence grounded directly in the live celebration database, powered by Google Gemini LLM with controlled tools and deterministic fallback.
+3. **Dynamic Budget Guardian:** Decimal-safe financial accounting, instant +60 extra guest impact modeling, and a strict state-machine approval workflow preventing unauthorized budget mutations.
+4. **Wedding-Day Operations Command Centre:** Minute-by-minute run of show, dynamic schedule impact and transit delay calculation, ripple conflict detection, and authorized revision publishing.
+5. **Vendor Marketplace & Double-Booking Prevention:** Multi-factor catering scoring with configurable weights, and transactional availability checks preventing duplicate booking of exclusive vendor slots.
+6. **Visual Seating Planner:** Drag-and-drop banquet seating with table capacity validation, VIP dignitaries placement, and single-table allocation enforcement.
+7. **Simulated Escrow Milestones:** Staged contract releases with duplicate settlement guards and an immutable platform audit trail.
 
 ---
 
-## 3. Technology Stack
+## 2. Technical Architecture & Engineering Depth
+
+Detailed architectural documentation is organized in [`docs/`](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/docs):
+- [**System Architecture & Multi-Role Ecosystem**](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/docs/architecture.md)
+- [**Relational Database Schema & ER Diagrams**](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/docs/database-schema.md)
+- [**AI Concierge Design & Tool Grounding**](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/docs/ai-design.md)
+- [**Security, RBAC, IDOR & Escrow Governance**](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/docs/security.md)
+
+### Architectural Highlights
+
+```mermaid
+graph TD
+    Client["Client Browser (React 18 + Vite + Tailwind CSS)"]
+    Gateway["FastAPI Gateway (Port 8000)"]
+    RBAC["RBAC & IDOR Security Guard"]
+    Services["Domain Services (Financial, Operations, Audit, AI)"]
+    DB[(SQLite / PostgreSQL Resilient Database)]
+    LLM["Google Gemini 2.5 Flash / Grounded Reasoning"]
+
+    Client -->|REST API + Bearer JWT| Gateway
+    Gateway --> RBAC
+    RBAC --> Services
+    Services --> DB
+    Services --> LLM
+```
+
+---
+
+## 3. Demo Personas & Authenticated Roles
+
+The platform provides pre-seeded demo personas for each authenticated role:
+
+| Persona | Role | Email | Password | Primary Experience |
+| :--- | :--- | :--- | :--- | :--- |
+| **Couple** | `couple` | `couple@theroyalknot.com` | `password123` | Rambagh Palace 400-guest portal, Guest Impact Simulator, Seating Planner, Staged Payments. |
+| **Lead Planner** | `planner` | `planner@theroyalknot.com` | `password123` | Operational task matrix, Budget Change Request approvals/rejections, Run-of-show publishing. |
+| **Vendor** | `vendor` | `vendor@theroyalknot.com` | `password123` | Royal Mewar Catering portal, Quotation tracking, Compliance document upload, Slot availability. |
+| **Administrator** | `admin` | `admin@theroyalknot.com` | `password123` | Platform analytics, Vendor verification queue, DPDP privacy requests, Immutable audit log viewer. |
+
+---
+
+## 4. Technology Stack
 
 ### Frontend
-- **Framework:** React 18 + Vite + TypeScript
-- **Styling:** Tailwind CSS + PostCSS + Autoprefixer
-- **Icons:** Lucide React
-- **Maps:** Leaflet & React Leaflet (OpenStreetMap tile provider)
-- **Animation & Confetti:** Canvas Confetti, custom CSS keyframe staggered motion
-- **State & Context:** React Router DOM v6, AuthContext with fast demo role switching
+- **Framework:** React 18 + TypeScript + Vite
+- **Styling:** Luxury Indian wedding design tokens (Ivory `#FAF7F2`, Champagne Gold `#C5A059`, Burgundy `#800020`, Charcoal `#2C2A29`) via Tailwind CSS
+- **Icons & Visuals:** Lucide React, Leaflet maps, Canvas Confetti
+- **State & Routing:** React Router v6, AuthContext with fast demo persona switcher
 
 ### Backend
-- **Framework:** Python FastAPI
-- **Database ORM:** SQLAlchemy 2.0 (Dual-mode: SQLite zero-config local development, PostgreSQL ready)
-- **Validation:** Pydantic v2 schemas
-- **Authentication:** JWT (HMAC-SHA256) + Passlib / Bcrypt password hashing
-- **Testing:** Pytest + FastAPI TestClient
+- **Framework:** Python FastAPI (REST API on port 8000)
+- **Database ORM:** SQLAlchemy 2.0 (SQLite local zero-config, PostgreSQL staging ready)
+- **Financial Calculation:** Decimal-safe `Decimal` arithmetic with `ROUND_HALF_UP`
+- **AI Integration:** Google Gemini (`gemini-2.5-flash`) via `google-genai` SDK with live DB context grounding and deterministic fallback
+- **Authentication & Security:** JWT (HMAC-SHA256) + Passlib / Bcrypt password hashing
+- **Testing:** Pytest with 17 comprehensive test suites covering RBAC, IDOR, Financial, Operations, and AI
 
 ---
 
-## 4. Setup & Running Instructions
+## 5. Local Setup & Running Instructions
 
 ### Prerequisites
-- Python 3.10+ (Tested on Python 3.14)
-- Node.js 18+ (Tested on Node.js v24.19 / npm 11.17)
+- Python 3.10+ (Tested on Python 3.11 / 3.14)
+- Node.js 18+ (Tested on Node.js 20 / 24)
 
 ### 1. Backend Setup
 ```bash
-# From repository root:
+# In your terminal, navigate to the project directory:
 cd backend
 
 # Install Python requirements
 pip install -r requirements.txt
 
-# Run the FastAPI server (seeds database automatically on startup)
+# Seed the database with Jaipur 400-guest celebration scenario
+python seed.py
+
+# Launch FastAPI backend server (Port 8000)
 python -m uvicorn backend.app.main:app --reload --port 8000
 ```
-- API Base URL: `http://localhost:8000`
-- Interactive Swagger Documentation: `http://localhost:8000/docs`
-- Health Endpoint: `http://localhost:8000/api/health`
+- API Gateway: `http://127.0.0.1:8000`
+- Interactive OpenAPI Swagger Docs: `http://127.0.0.1:8000/docs`
+- Health Endpoint: `http://127.0.0.1:8000/api/health`
 
 ### 2. Frontend Setup
 ```bash
-# In a separate terminal, navigate to frontend:
+# In a separate terminal, navigate to the frontend directory:
 cd frontend
 
 # Install Node dependencies
 npm install
 
-# Start Vite development server
+# Start Vite development server (Port 5173)
 npm run dev
 ```
 - Web Application URL: `http://localhost:5173`
 
-### 3. Running Backend Tests
+---
+
+## 6. Running the Test Suite & Quality Verification
+
 ```bash
-# From repository root:
-python -m pytest backend/tests/test_api.py -v
+# Run all backend unit and production engineering tests:
+python -m pytest backend/tests/ -v
+
+# Run frontend TypeScript typecheck and production build:
+cd frontend
+npm run build
 ```
 
 ---
 
-## 5. Demonstration Credentials & Persona Switcher
+## 7. Continuous Integration (CI)
 
-The top header bar includes a **"Role: Demo Selector"** button allowing immediate switching between all 4 personas without manually typing passwords:
-
-| Role | Name | Email | Password | Primary Capabilities |
-| :--- | :--- | :--- | :--- | :--- |
-| **Couple** | Aarav Singhania & Meera Kapoor | `couple@theroyalknot.com` | `password123` | Budget Guardian, Catering Comparison, Payments, Digital Contract Signing |
-| **Planner** | Ananya Sharma | `planner@theroyalknot.com` | `password123` | Task Matrix, Incident Logs, Budget Change Request Authorizations |
-| **Vendor** | Vikramaditya Rathore (Royal Mewar) | `vendor@theroyalknot.com` | `password123` | Verification Status, Service Packages, Line-Item Quotation Dispatches |
-| **Admin** | Maharaj Digvijay | `admin@theroyalknot.com` | `password123` | Platform Analytics, Vendor Verification Queue (Approve/Reject), DPDP Compliance |
-
----
-
-## 6. Demonstration Scenario Walkthrough (Jaipur 400-Guest Wedding)
-
-1. **Curtain Entrance:** Open `http://localhost:5173`. Click *"Partake in the Celebration"* to reveal the luxury portal.
-2. **Palace Venue Discovery:** Navigate to **Palace Venues**. View OpenStreetMap markers for Rambagh Palace and book a consultation using the **SlotPicker**.
-3. **Catering Quotation Comparison:** Navigate to **Couple Portal** (`/dashboard`). Under *"Intelligent Catering Quotation Comparison"*, compare:
-   - *Royal Mewar Caterers* (₹2,800/plate, 18 live counters, bone china, recommended)
-   - *Rajputana Heritage Feast* (₹3,200/plate, silver thalis)
-   - *Shekhawati Gourmet Kitchens* (₹2,400/plate, melamine tableware)
-   Click *"Accept Quotation"* to bind the agreement.
-4. **Extra 60 Guests Simulation (+₹2,47,800 impact):**
-   - In the Couple Dashboard *"Guest Impact Simulator"*, enter `60` guests.
-   - Click *"Simulate Cost Impact"* to view live breakdown (Catering + 18% GST + Seating).
-   - Click *"Create Formal Change Request"*. Notice that budget changes cannot be applied silently per Section 5.9.
-   - Switch to **Planner Console** (`/planner-portal`) or click *"Authorize & Apply Budget Escalation"* to approve the request, updating the budget to ₹52.48 Lakhs.
-5. **Live Command Centre Delay Simulation:**
-   - Navigate to **Command Centre** (`/command-centre`).
-   - Click *"Simulate 30m Catering Delay"* on Royal Mewar Caterers.
-   - Observe cascade buffer highlights across dependent events (Milni, Dinner Buffet, Coordinator Mitigation).
-   - Click *"Authorize & Publish Revised Run of Show"* to formally distribute the updated schedule.
-6. **Grounded AI Wedding Copilot:**
-   - In the Command Centre right-hand pane, click quick prompts: *"Which vendors are delayed?"* or *"What happens if 60 more guests attend?"*
-   - Verify grounded responses retrieved from real database records.
-7. **Staged Escrow Payment:**
-   - In the Couple Dashboard, click *"Settle Escrow"* on the pending ₹4,50,000 floral milestone.
-   - Authorize via Simulated UPI or RTGS. Confetti triggers and transaction `TXN-TRK-...` is recorded.
-8. **Digital Contract Signing:**
-   - Draw your signature on the **SignaturePad** canvas and click *"Confirm Signature"*.
-9. **Vendor Verification Queue:**
-   - Switch to **Admin Portal** (`/admin-portal`).
-   - In the *"Vendor Verification & Compliance Queue"*, review *Shekhawati Gourmet Kitchens* and click *"Approve Vendor"* to grant verified status.
-
----
-
-## 7. Security, Privacy & Transparency Charter
-
-- **No Secrets in Source Control:** `.env` and `.env.*` are strictly excluded in `.gitignore`. A clean `.env.example` is provided.
-- **No Stored Card Data:** The platform never stores or processes raw credit card numbers or CVV values.
-- **GDPR / DPDP Compliance:** Full data deletion and export workflow under `/data-deletion`.
-- **Zero Dark Patterns:** Transparent per-plate pricing, no fake scarcity timers, and honest disclosure of simulated escrow settlements.
+A full CI workflow is active at [`.github/workflows/ci.yml`](file:///c:/Users/haasi/OneDrive/Desktop/the-royal-knot/.github/workflows/ci.yml) validating:
+1. Automated backend setup, dependency caching, and SQLite seeding.
+2. Execution of the complete Pytest suite (RBAC, IDOR, Financial, Operations, AI).
+3. Frontend TypeScript compilation and Vite production asset bundling.
 
 ---
 
 ## 8. License
 
-Distributed under the MIT License. Copyright © 2026 The Royal Knot.
+Developed for hackathon evaluation and production demonstration. All proprietary luxury wedding workflows, brand assets, and designs belong to The Royal Knot.

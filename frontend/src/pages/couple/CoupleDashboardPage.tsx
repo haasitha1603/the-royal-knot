@@ -157,61 +157,27 @@ export const CoupleDashboardPage: React.FC = () => {
     setChangeRequestStatus(null);
   };
 
-  // Submit and Immediately Apply Changes to Official Wedding State & Financial Ledger
+  // Submit Formal Budget Change Request awaiting Senior Royal Planner Review
   const handleExecuteChangeRequest = async () => {
     setShowApplyConfirmModal(false);
     try {
-      const additionalCost = simulatedImpact?.cost_breakdown?.total_estimated_impact || (extraGuestCount * 4454);
-      const currentGuests = wedding?.estimated_guests || 400;
-      const currentBudget = wedding?.total_budget || 5000000;
-      const updatedGuests = currentGuests + extraGuestCount;
-      const updatedBudget = currentBudget + additionalCost;
-
-      // 1. Dispatch change request to API
+      // 1. Dispatch formal change request to backend
       await api.createBudgetChangeRequest(activeWeddingId, {
         additional_guests: extraGuestCount,
         reason: `Family addition of ${extraGuestCount} guests for Jaipur Reception & Pheras.`
       });
 
-      // 2. Immediately synchronize active wedding state and localStorage
-      const updatedWedding: Wedding = {
-        id: wedding?.id || activeWeddingId,
-        owner_id: wedding?.owner_id || 'user-couple-01',
-        planner_id: wedding?.planner_id || 'user-planner-01',
-        couple_names: wedding?.couple_names || 'Aarav Singhania & Meera Kapoor',
-        partner1_name: wedding?.partner1_name || 'Aarav Singhania',
-        partner2_name: wedding?.partner2_name || 'Meera Kapoor',
-        wedding_date: wedding?.wedding_date || '2026-11-21',
-        destination_city: wedding?.destination_city || 'Jaipur',
-        destination_state: wedding?.destination_state || 'Rajasthan',
-        estimated_guests: updatedGuests,
-        total_budget: updatedBudget,
-        allocated_budget: (wedding?.allocated_budget || 4450000) + additionalCost,
-        currency: wedding?.currency || 'INR',
-        style: wedding?.style || 'Royal Palace',
-        ceremony_tradition: wedding?.ceremony_tradition || 'Hindu Traditional',
-        status: wedding?.status || 'planning',
-        is_demo: wedding?.is_demo ?? true,
-        primary_venue_name: wedding?.primary_venue_name || 'Rambagh Palace, Jaipur'
-      };
+      // 2. Fetch updated overview from server
+      const refreshedOverview = await api.getBudgetOverview(activeWeddingId);
+      setBudgetOverview(refreshedOverview);
 
-      setWedding(updatedWedding);
-      localStorage.setItem('royal_knot_active_wedding', JSON.stringify(updatedWedding));
-      localStorage.setItem('royal_knot_active_wedding_id', updatedWedding.id);
-
-      // 3. Immediately update budget overview
-      setBudgetOverview(prev => prev ? {
-        ...prev,
-        total_approved_budget: updatedBudget,
-        total_allocated: (prev.total_allocated || (prev as any).allocated_budget || 4450000) + additionalCost,
-        remaining_balance: Math.max(0, updatedBudget - ((prev.total_allocated || (prev as any).allocated_budget || 4450000) + additionalCost))
-      } : null);
-
-      setChangeRequestStatus('approved');
-      setApplyToast(`✓ Wedding successfully updated to ${updatedGuests} guests and ₹${(updatedBudget / 100000).toFixed(2)} Lakhs budget.`);
+      setChangeRequestStatus('pending');
+      setApplyToast(`Formal Budget Change Request for +${extraGuestCount} guests submitted! Awaiting review and sign-off by your Senior Royal Planner.`);
+      setTimeout(() => setApplyToast(null), 6000);
+    } catch (err: any) {
+      console.error('Error submitting budget change request:', err);
+      setApplyToast(`Failed to submit request: ${err.message || 'Server error'}`);
       setTimeout(() => setApplyToast(null), 5000);
-    } catch (err) {
-      console.error('Error applying budget change:', err);
     }
   };
 

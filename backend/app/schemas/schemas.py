@@ -246,7 +246,7 @@ class BudgetSimulateRequest(BaseModel):
     gift_favor_per_guest: float = 350.0
 
 class BudgetChangeRequestCreate(BaseModel):
-    wedding_id: str
+    wedding_id: Optional[str] = None
     additional_guests: int
     reason: str
 
@@ -269,7 +269,7 @@ class BudgetChangeRequestResponse(BaseModel):
 
 # Payment Schemas
 class PaymentRecordCreate(BaseModel):
-    wedding_id: str
+    wedding_id: Optional[str] = None
     vendor_id: Optional[str] = None
     title: str
     stage: str
@@ -423,3 +423,4 @@ class AIQueryResponse(BaseModel):
     answer: str
     data_points: Dict[str, Any]
     confidence: float
+    action: Optional[Dict[str, Any]] = None

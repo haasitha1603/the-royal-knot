@@ -64,12 +64,20 @@ function saveStoredWedding(wedding: any) {
   localStorage.setItem('royal_knot_active_wedding_id', wedding.id);
 }
 
+export function isDemoModeActive(): boolean {
+  return localStorage.getItem('royal_knot_demo_mode') === 'true' || import.meta.env.VITE_DEMO_MODE === 'true';
+}
+
+export function setDemoModeActive(enabled: boolean): void {
+  localStorage.setItem('royal_knot_demo_mode', enabled ? 'true' : 'false');
+}
+
 // Resilient Request handler
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
     const response = await fetch(url, {
       ...options,
@@ -84,12 +92,27 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     if (response.ok) {
       return await response.json();
     }
-  } catch (netErr) {
-    console.warn(`[Royal Knot Client] Network sync fallback activated for ${endpoint}:`, netErr);
-  }
 
-  // Graceful Local Mock Handling for all endpoints
-  return handleLocalFallback<T>(endpoint, options);
+    // Backend returned an HTTP error status (400, 403, 404, 409, 500)
+    // Extract genuine backend diagnostic message
+    const errorBody = await response.json().catch(() => null);
+    const detail = errorBody?.detail || errorBody?.message || `HTTP ${response.status}: ${response.statusText}`;
+    throw new Error(detail);
+  } catch (err: any) {
+    // If it's a genuine HTTP error from the backend, re-throw directly
+    if (err.message && !err.message.includes('abort') && !err.message.includes('fetch')) {
+      throw err;
+    }
+
+    // Network connection failure (server unreachable)
+    if (isDemoModeActive()) {
+      console.warn(`[Royal Knot Client] Demo Mode Active: Falling back to local state for ${endpoint}`);
+      return handleLocalFallback<T>(endpoint, options);
+    }
+
+    console.error(`[Royal Knot Client] Backend network failure for ${endpoint}:`, err);
+    throw new Error(`Unable to connect to The Royal Knot backend at ${BASE_URL}. Please verify the server is running on port 8000.`);
+  }
 }
 
 function handleLocalFallback<T>(endpoint: string, options: RequestInit): T {
@@ -446,6 +469,8 @@ export const api = {
     request<any>(`/budgets/wedding/${weddingId}/change-requests`, { method: 'POST', body: JSON.stringify(data) }),
   getBudgetChangeRequests: (weddingId: string) => request<any[]>(`/budgets/wedding/${weddingId}/change-requests`),
   approveBudgetChangeRequest: (requestId: string) => request<any>(`/budgets/change-requests/${requestId}/approve`, { method: 'POST' }),
+  rejectBudgetChangeRequest: (requestId: string, reason?: string) =>
+    request<any>(`/budgets/change-requests/${requestId}/reject?reason=${encodeURIComponent(reason || '')}`, { method: 'POST' }),
 
   // Payments
   getPayments: (weddingId: string) => request<any[]>(`/payments/wedding/${weddingId}`),
@@ -461,6 +486,8 @@ export const api = {
   getSeatingTables: (weddingId: string) => request<any[]>(`/guests/wedding/${weddingId}/tables`),
   assignGuestToTable: (weddingId: string, tableId: string, guestId: string) =>
     request<any>(`/guests/wedding/${weddingId}/tables/${tableId}/assign-guest/${guestId}`, { method: 'POST' }),
+  unassignGuestTable: (weddingId: string, guestId: string) =>
+    request<any>(`/guests/wedding/${weddingId}/guests/${guestId}/unassign-table`, { method: 'POST' }),
 
   // Operations & Live Command Centre
   getTasks: (weddingId: string) => request<any[]>(`/operations/wedding/${weddingId}/tasks`),
@@ -483,6 +510,9 @@ export const api = {
   getVerificationQueue: () => request<any[]>('/admin/verification-queue'),
   updateVerificationDecision: (vendorId: string, action: string, notes?: string) =>
     request<any>(`/admin/verification-queue/${vendorId}/decision?action=${action}&notes=${encodeURIComponent(notes || '')}`, { method: 'POST' }),
+  getAuditLogs: (limit?: number) => request<any[]>(`/admin/audit-logs${limit ? `?limit=${limit}` : ''}`),
+  checkVendorAvailability: (vendorId: string, date: string) =>
+    request<any>(`/vendors/${vendorId}/availability?date=${encodeURIComponent(date)}`),
   getComplaints: () => request<any[]>('/admin/complaints'),
   getPrivacyRequests: () => request<any[]>('/admin/privacy-requests'),
 };

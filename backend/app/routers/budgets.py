@@ -11,119 +11,81 @@ from backend.app.schemas.schemas import (
     BudgetChangeRequestCreate, BudgetSimulateRequest
 )
 from backend.app.routers.auth import get_current_user
+from backend.app.dependencies import (
+    verify_wedding_access, verify_wedding_planner_or_admin
+)
+from backend.app.services.financial import FinancialService
+from backend.app.services.audit import AuditService
 
 router = APIRouter(prefix="/budgets", tags=["Budget Guardian"])
 
 @router.get("/wedding/{wedding_id}/overview")
-def get_budget_overview(wedding_id: str, db: Session = Depends(get_db)):
-    wedding = db.query(Wedding).filter(Wedding.id == wedding_id).first()
-    if not wedding:
-        raise HTTPException(status_code=404, detail="Wedding not found")
-
-    categories = db.query(BudgetCategory).filter(
-        BudgetCategory.wedding_id == wedding_id
-    ).all()
-
-    total_allocated = sum(c.allocated_amount for c in categories) or wedding.total_budget
-    total_committed = sum(c.committed_amount for c in categories)
-    total_spent = sum(c.actual_spent for c in categories)
-    remaining_balance = wedding.total_budget - total_spent
-
-    pending_change_requests = db.query(BudgetChangeRequest).filter(
-        BudgetChangeRequest.wedding_id == wedding_id,
-        BudgetChangeRequest.status == "pending"
-    ).all()
-
-    return {
-        "wedding_id": wedding.id,
-        "couple_names": wedding.couple_names,
-        "total_approved_budget": wedding.total_budget,
-        "total_allocated": total_allocated,
-        "total_committed": total_committed,
-        "total_actual_spent": total_spent,
-        "remaining_balance": remaining_balance,
-        "spending_percentage": round((total_spent / wedding.total_budget) * 100, 1) if wedding.total_budget > 0 else 0,
-        "is_overspending_risk": (total_committed > wedding.total_budget),
-        "categories": [
-            {
-                "id": c.id,
-                "name": c.name,
-                "allocated": c.allocated_amount,
-                "committed": c.committed_amount,
-                "actual_spent": c.actual_spent,
-                "variance": round(c.allocated_amount - c.committed_amount, 2)
-            }
-            for c in categories
-        ],
-        "pending_requests_count": len(pending_change_requests)
-    }
+def get_budget_overview(
+    wedding_id: str,
+    wedding: Wedding = Depends(verify_wedding_access),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns exact, decimal-safe financial summary calculated by FinancialService.
+    Guarantees consistency across couple, planner, and admin dashboards.
+    """
+    return FinancialService.calculate_budget_summary(wedding, db)
 
 @router.post("/wedding/{wedding_id}/simulate-extra-guests")
 def simulate_extra_guests(
     wedding_id: str,
     payload: BudgetSimulateRequest,
+    wedding: Wedding = Depends(verify_wedding_access),
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     """
     Evaluates the financial impact of adding N guests (e.g., 60 additional guests)
     using the active catering quotation and banquet capacity parameters.
     """
-    wedding = db.query(Wedding).filter(Wedding.id == wedding_id).first()
-    if not wedding:
-        raise HTTPException(status_code=404, detail="Wedding not found")
-
-    # Find accepted catering quote or default
+    # Check for accepted catering quote to get custom plate price if available
     active_quote = db.query(Quotation).filter(
-        Quotation.wedding_id == wedding_id,
+        Quotation.wedding_id == wedding.id,
         Quotation.status == "accepted"
     ).first()
 
     plate_price = active_quote.price_per_unit if active_quote else payload.catering_price_per_plate
-    extra_guests = payload.additional_guests
 
-    catering_cost = extra_guests * plate_price
-    catering_tax = catering_cost * 0.18 # 18% GST on luxury banquet catering
-    seating_cost = extra_guests * payload.seating_cost_per_guest
-    gifts_favors_cost = extra_guests * payload.gift_favor_per_guest
-    total_impact = catering_cost + catering_tax + seating_cost + gifts_favors_cost
+    impact_result = FinancialService.calculate_guest_impact(
+        wedding=wedding,
+        extra_guests=payload.additional_guests,
+        catering_price_per_plate=plate_price,
+        seating_cost_per_guest=payload.seating_cost_per_guest,
+        gift_favor_per_guest=payload.gift_favor_per_guest
+    )
 
-    projected_budget = wedding.total_budget + total_impact
-    projected_guests = wedding.estimated_guests + extra_guests
-
-    return {
-        "wedding_id": wedding_id,
-        "current_guest_count": wedding.estimated_guests,
-        "additional_guests": extra_guests,
-        "projected_guest_count": projected_guests,
-        "cost_breakdown": {
-            "catering_subtotal": catering_cost,
-            "catering_gst_18pct": catering_tax,
-            "seating_and_tableware": seating_cost,
-            "guest_favors_and_amenities": gifts_favors_cost,
-            "total_estimated_impact": total_impact
-        },
-        "current_total_budget": wedding.total_budget,
-        "projected_total_budget": projected_budget,
-        "requires_authorization": True,
-        "notice": "Per Section 5.9 of platform governance, budget changes cannot be applied silently. An explicit Budget Change Request must be formally approved."
-    }
+    impact_result["wedding_id"] = wedding.id
+    impact_result["requires_authorization"] = True
+    impact_result["notice"] = (
+        "Per platform financial governance, budget changes cannot be applied silently. "
+        "An explicit Budget Change Request must be formally approved by an authorized wedding planner or administrator."
+    )
+    return impact_result
 
 @router.post("/wedding/{wedding_id}/change-requests", response_model=BudgetChangeRequestResponse)
 def create_budget_change_request(
     wedding_id: str,
     payload: BudgetChangeRequestCreate,
+    wedding: Wedding = Depends(verify_wedding_access),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    wedding = db.query(Wedding).filter(Wedding.id == wedding_id).first()
-    if not wedding:
-        raise HTTPException(status_code=404, detail="Wedding not found")
-
-    # Estimate cost impact (+60 guests = ~₹2,47,800)
+    """
+    Creates a formal Budget Change Request in 'pending' status.
+    CRITICAL: Does NOT mutate official wedding budget immediately.
+    Awaiting planner or admin review and approval.
+    """
     extra_guests = payload.additional_guests
-    plate_price = 2800.0
-    impact = (extra_guests * plate_price * 1.18) + (extra_guests * 450) + (extra_guests * 350)
-    new_budget = wedding.total_budget + impact
+    impact_data = FinancialService.calculate_guest_impact(
+        wedding=wedding,
+        extra_guests=extra_guests
+    )
+    cost_impact = impact_data["cost_breakdown"]["total_estimated_impact"]
+    new_budget = impact_data["projected_total_budget"]
 
     bcr = BudgetChangeRequest(
         wedding_id=wedding.id,
@@ -131,19 +93,41 @@ def create_budget_change_request(
         previous_budget=wedding.total_budget,
         new_budget=new_budget,
         additional_guests=extra_guests,
-        estimated_cost_impact=impact,
+        estimated_cost_impact=cost_impact,
         reason=payload.reason,
         status="pending"
     )
     db.add(bcr)
+    db.flush()
+
+    AuditService.log_event(
+        db=db,
+        action="BUDGET_CHANGE_REQUESTED",
+        entity_name="BudgetChangeRequest",
+        entity_id=bcr.id,
+        user_id=current_user.id,
+        details={
+            "wedding_id": wedding.id,
+            "additional_guests": extra_guests,
+            "estimated_cost_impact": cost_impact,
+            "previous_budget": wedding.total_budget,
+            "new_projected_budget": new_budget,
+            "reason": payload.reason
+        }
+    )
+
     db.commit()
     db.refresh(bcr)
     return bcr
 
 @router.get("/wedding/{wedding_id}/change-requests", response_model=List[BudgetChangeRequestResponse])
-def get_change_requests(wedding_id: str, db: Session = Depends(get_db)):
+def get_change_requests(
+    wedding_id: str,
+    wedding: Wedding = Depends(verify_wedding_access),
+    db: Session = Depends(get_db)
+):
     return db.query(BudgetChangeRequest).filter(
-        BudgetChangeRequest.wedding_id == wedding_id
+        BudgetChangeRequest.wedding_id == wedding.id
     ).order_by(BudgetChangeRequest.created_at.desc()).all()
 
 @router.post("/change-requests/{request_id}/approve", response_model=BudgetChangeRequestResponse)
@@ -152,32 +136,116 @@ def approve_budget_change_request(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """
+    Approves a pending budget change request.
+    Restricted to wedding planner or platform administrator.
+    Only upon approval does the official wedding budget update.
+    """
     bcr = db.query(BudgetChangeRequest).filter(BudgetChangeRequest.id == request_id).first()
     if not bcr:
         raise HTTPException(status_code=404, detail="Change request not found")
 
-    # Authorize: Planner, Owner, or Admin
+    if bcr.status != "pending":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Change request cannot be approved because it is already '{bcr.status}'."
+        )
+
+    # Verify authorization
     wedding = db.query(Wedding).filter(Wedding.id == bcr.wedding_id).first()
-    if current_user.role not in ["admin", "planner"] and current_user.id != wedding.owner_id:
-        raise HTTPException(status_code=403, detail="Unauthorized to approve budget changes.")
+    if not wedding:
+        raise HTTPException(status_code=404, detail="Associated wedding celebration not found")
+
+    if current_user.role not in ["admin", "planner"] and (wedding.owner_id != current_user.id if wedding.is_demo else True):
+        # Strict planner/admin requirement for non-demo, or owner if demo
+        if current_user.role != "admin" and not (current_user.role == "planner" and wedding.planner_id == current_user.id):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Unauthorized: Formal budget change approvals require an authorized Wedding Planner or Administrator."
+            )
 
     bcr.status = "approved"
     bcr.approved_by_id = current_user.id
-    bcr.approval_notes = f"Approved by {current_user.full_name} ({current_user.role})."
+    bcr.approval_notes = f"Approved by {current_user.full_name} ({current_user.role.capitalize()})."
 
-    # Now formally update the wedding budget and guest count
+    # Formally mutate official wedding budget and guest count
     wedding.total_budget = bcr.new_budget
     if bcr.additional_guests > 0:
-        wedding.estimated_guests += bcr.additional_guests
+        wedding.estimated_guests = (wedding.estimated_guests or 0) + bcr.additional_guests
 
-    # Also update catering category allocation
+    # Also adjust catering category allocation to absorb incremental cost
     catering_cat = db.query(BudgetCategory).filter(
         BudgetCategory.wedding_id == wedding.id,
-        BudgetCategory.name.like("%Catering%")
+        BudgetCategory.name.ilike("%Catering%")
     ).first()
     if catering_cat:
         catering_cat.allocated_amount += bcr.estimated_cost_impact
         catering_cat.committed_amount += bcr.estimated_cost_impact
+
+    AuditService.log_event(
+        db=db,
+        action="BUDGET_CHANGE_APPROVED",
+        entity_name="BudgetChangeRequest",
+        entity_id=bcr.id,
+        user_id=current_user.id,
+        details={
+            "wedding_id": wedding.id,
+            "new_official_budget": wedding.total_budget,
+            "added_guests": bcr.additional_guests,
+            "cost_impact": bcr.estimated_cost_impact
+        }
+    )
+
+    db.commit()
+    db.refresh(bcr)
+    return bcr
+
+@router.post("/change-requests/{request_id}/reject", response_model=BudgetChangeRequestResponse)
+def reject_budget_change_request(
+    request_id: str,
+    reason: str = "Capacity or financial constraints exceed target threshold.",
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Rejects a pending budget change request.
+    Restricted to wedding planner or platform administrator.
+    """
+    bcr = db.query(BudgetChangeRequest).filter(BudgetChangeRequest.id == request_id).first()
+    if not bcr:
+        raise HTTPException(status_code=404, detail="Change request not found")
+
+    if bcr.status != "pending":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Change request cannot be rejected because it is already '{bcr.status}'."
+        )
+
+    wedding = db.query(Wedding).filter(Wedding.id == bcr.wedding_id).first()
+    if not wedding:
+        raise HTTPException(status_code=404, detail="Associated wedding celebration not found")
+
+    if current_user.role != "admin" and not (current_user.role == "planner" and wedding.planner_id == current_user.id) and not (wedding.is_demo and current_user.role == "planner"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Unauthorized: Formal budget change rejections require an authorized Wedding Planner or Administrator."
+        )
+
+    bcr.status = "rejected"
+    bcr.approved_by_id = current_user.id
+    bcr.approval_notes = f"Rejected by {current_user.full_name} ({current_user.role.capitalize()}): {reason}"
+
+    AuditService.log_event(
+        db=db,
+        action="BUDGET_CHANGE_REJECTED",
+        entity_name="BudgetChangeRequest",
+        entity_id=bcr.id,
+        user_id=current_user.id,
+        details={
+            "wedding_id": wedding.id,
+            "rejection_reason": reason
+        }
+    )
 
     db.commit()
     db.refresh(bcr)

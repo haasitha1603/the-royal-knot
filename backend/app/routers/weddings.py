@@ -9,6 +9,8 @@ from backend.app.schemas.schemas import (
     WeddingFunctionCreate, WeddingFunctionResponse
 )
 from backend.app.routers.auth import get_current_user
+from backend.app.dependencies import verify_wedding_access, verify_wedding_owner
+from backend.app.services.audit import AuditService
 
 router = APIRouter(prefix="/weddings", tags=["Weddings & Functions"])
 
@@ -34,8 +36,21 @@ def create_wedding(
         status="planning"
     )
     db.add(wedding)
-    db.commit()
-    db.refresh(wedding)
+    db.flush()
+
+    AuditService.log_event(
+        db=db,
+        action="WEDDING_CREATED",
+        entity_name="Wedding",
+        entity_id=wedding.id,
+        user_id=current_user.id,
+        details={
+            "couple_names": wedding.couple_names,
+            "wedding_date": wedding.wedding_date,
+            "total_budget": wedding.total_budget,
+            "destination_city": wedding.destination_city
+        }
+    )
 
     # Automatically generate default ceremonies/functions if none provided
     functions_to_add = wedding_in.functions or [
@@ -103,27 +118,34 @@ def get_user_weddings(
 @router.get("/{wedding_id}", response_model=WeddingResponse)
 def get_wedding_by_id(
     wedding_id: str,
-    current_user: User = Depends(get_current_user),
+    wedding: Wedding = Depends(verify_wedding_access),
     db: Session = Depends(get_db)
 ):
-    wedding = db.query(Wedding).filter(Wedding.id == wedding_id).first()
-    if not wedding:
-        raise HTTPException(status_code=404, detail="Wedding not found")
     return wedding
 
 @router.put("/{wedding_id}", response_model=WeddingResponse)
 def update_wedding(
     wedding_id: str,
     update_data: WeddingUpdate,
+    wedding: Wedding = Depends(verify_wedding_owner),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    wedding = db.query(Wedding).filter(Wedding.id == wedding_id).first()
-    if not wedding:
-        raise HTTPException(status_code=404, detail="Wedding not found")
-
+    changed_fields = {}
     for key, val in update_data.model_dump(exclude_unset=True).items():
+        old_val = getattr(wedding, key, None)
+        if old_val != val:
+            changed_fields[key] = {"from": old_val, "to": val}
         setattr(wedding, key, val)
+
+    AuditService.log_event(
+        db=db,
+        action="WEDDING_UPDATED",
+        entity_name="Wedding",
+        entity_id=wedding.id,
+        user_id=current_user.id,
+        details={"changes": changed_fields}
+    )
 
     db.commit()
     db.refresh(wedding)
@@ -132,7 +154,7 @@ def update_wedding(
 @router.get("/{wedding_id}/functions", response_model=List[WeddingFunctionResponse])
 def get_wedding_functions(
     wedding_id: str,
-    current_user: User = Depends(get_current_user),
+    wedding: Wedding = Depends(verify_wedding_access),
     db: Session = Depends(get_db)
 ):
     return db.query(WeddingFunction).filter(

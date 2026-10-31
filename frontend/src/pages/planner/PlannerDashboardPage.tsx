@@ -59,8 +59,21 @@ export const PlannerDashboardPage: React.FC = () => {
       await api.approveBudgetChangeRequest(requestId);
       await loadPlannerData();
       alert("Budget Change Request formally approved by Senior Planner. Wedding budget and guest allocations updated.");
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error approving request:', err);
+      alert(`Approval error: ${err.message || 'Operation failed'}`);
+    }
+  };
+
+  const handleRejectRequest = async (requestId: string) => {
+    const reason = prompt("Enter rationale for rejecting this change request:") || "Exceeds approved celebration bounds.";
+    try {
+      await api.rejectBudgetChangeRequest(requestId, reason);
+      await loadPlannerData();
+      alert("Budget Change Request rejected.");
+    } catch (err: any) {
+      console.error('Error rejecting request:', err);
+      alert(`Rejection error: ${err.message || 'Operation failed'}`);
     }
   };
 
@@ -169,6 +182,14 @@ export const PlannerDashboardPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleRejectRequest(req.id)}
+                      className="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 font-semibold uppercase tracking-wider text-xs shadow-sm transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Reject</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleApproveRequest(req.id)}

@@ -12,9 +12,11 @@ import {
   AlertTriangle,
   ArrowRight,
   ShieldCheck,
-  Bot
+  Bot,
+  Loader2
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { api } from '../../services/api';
 
 interface Message {
   sender: 'user' | 'assistant';
@@ -31,6 +33,7 @@ export const AIWeddingAssistant: React.FC = () => {
   const { user, activeWeddingId } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'assistant',
@@ -46,77 +49,37 @@ export const AIWeddingAssistant: React.FC = () => {
     'Open Visual Seating'
   ];
 
-  const handleSend = (queryText?: string) => {
+  const handleSend = async (queryText?: string) => {
     const textToSend = queryText || input;
-    if (!textToSend.trim()) return;
+    if (!textToSend.trim() || isLoading) return;
 
     const userMsg: Message = { sender: 'user', text: textToSend };
     setMessages(prev => [...prev, userMsg]);
     if (!queryText) setInput('');
+    setIsLoading(true);
 
-    setTimeout(() => {
-      const lower = textToSend.toLowerCase();
-      let reply: Message;
+    try {
+      const weddingId = activeWeddingId || 'wedding-jaipur-demo-400';
+      const response = await api.queryAI(weddingId, textToSend);
 
-      if (lower.includes('payment') || lower.includes('escrow') || lower.includes('money') || lower.includes('bill')) {
-        reply = {
-          sender: 'assistant',
-          text: 'You have 1 pending staged payment: Milestone 2 (Catering & Banquet 40% Advance) for ₹5,60,000 due to Royal Mewar Caterers. Escrow balance currently stands at ₹35,80,000.',
-          action: {
-            label: 'Go to Financial Milestones',
-            path: '/dashboard'
-          }
-        };
-      } else if (lower.includes('task') || lower.includes('todo') || lower.includes('schedule')) {
-        reply = {
-          sender: 'assistant',
-          text: 'You have 2 key pending actions: 1) Countersign the Royal Mewar Catering Agreement, and 2) Review the lawn seating extension for the Grand Reception.',
-          action: {
-            label: 'Review Tasks in Dashboard',
-            path: '/dashboard'
-          }
-        };
-      } else if (lower.includes('60') || lower.includes('extra guest') || lower.includes('simulator') || lower.includes('capacity')) {
-        reply = {
-          sender: 'assistant',
-          text: 'Adding +60 guests (Total: 460) projects an estimated commitment of ₹2,74,200 (including catering at ₹2,800/plate, 18% GST, tableware, and hampers). Note: 460 guests exceeds the Rambagh Ballroom standard capacity of 420; a garden marquee extension is recommended.',
-          action: {
-            label: 'Open Guest Impact Simulator',
-            path: '/dashboard'
-          }
-        };
-      } else if (lower.includes('seat') || lower.includes('table') || lower.includes('chair')) {
-        reply = {
-          sender: 'assistant',
-          text: 'Visual Seating is active with 6 banquet tables. VIP Head Tables #1 & #2 are assigned to family dignitaries. You can drag and drop unassigned guests or view capacity limits.',
-          action: {
-            label: 'Open Visual Seating Planner',
-            path: '/guests'
-          }
-        };
-      } else if (lower.includes('marriage registration') || lower.includes('special marriage') || lower.includes('legal') || lower.includes('court')) {
-        reply = {
-          sender: 'assistant',
-          text: 'For legal marriage solemnization under the Special Marriage Act (1954), you require: 3 adult witnesses with Government IDs, 30-day notice filing at the Sub-Registrar office, age/residence proof, and affidavits.',
-          action: {
-            label: 'View Marriage Registration Checklist',
-            path: '/marriage-registration'
-          }
-        };
-      } else if (lower.includes('approve') || lower.includes('sign for me') || lower.includes('release funds')) {
-        reply = {
-          sender: 'assistant',
-          text: 'In accordance with platform governance (Section 5.9), I cannot autonomously execute digital signatures or release escrow payouts. Legally binding authorizations require your explicit authenticated sign-off.'
-        };
-      } else {
-        reply = {
-          sender: 'assistant',
-          text: `I understand your query regarding "${textToSend}". I can guide you through palace venues, catering comparisons, budget projections, and guest management across Jaipur, Udaipur, and Jodhpur.`
-        };
-      }
-
+      const reply: Message = {
+        sender: 'assistant',
+        text: response.answer,
+        action: response.action
+      };
       setMessages(prev => [...prev, reply]);
-    }, 600);
+    } catch (err: any) {
+      console.warn('[AI Concierge] API query failed, falling back:', err);
+      setMessages(prev => [
+        ...prev,
+        {
+          sender: 'assistant',
+          text: `I encountered an issue retrieving real-time intelligence: ${err.message || 'Server unavailable'}. You can explore live operations directly from your dashboard.`
+        }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -207,6 +170,15 @@ export const AIWeddingAssistant: React.FC = () => {
                 )}
               </div>
             ))}
+
+            {isLoading && (
+              <div className="flex flex-col items-start">
+                <div className="p-3.5 rounded-2xl max-w-[85%] bg-white text-charcoal-700 border border-gold-200 rounded-bl-none shadow-sm flex items-center gap-2">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-burgundy-700" />
+                  <span className="italic text-charcoal-500 text-[11px]">Consulting celebration records...</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Input Box */}

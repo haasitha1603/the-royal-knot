@@ -227,31 +227,75 @@ export const CommandCentrePage: React.FC = () => {
                 </span>
               </div>
 
-              {/* Downstream affected events */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="bg-white rounded-xl p-3.5 border border-amber-200">
-                  <span className="font-bold text-charcoal-800 block mb-1">Impacted Schedule Events:</span>
-                  <ul className="space-y-1 text-charcoal-600">
-                    {delayResult.dependent_downstream_events?.map((ev: string, i: number) => (
-                      <li key={i} className="flex items-center gap-1.5 text-amber-950 font-medium">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
-                        <span>{ev} (Pushed by 30 mins)</span>
-                      </li>
-                    ))}
-                  </ul>
+              {/* Downstream affected events & Proposed Revisions */}
+              <div className="space-y-3 text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white rounded-xl p-3.5 border border-amber-200">
+                    <span className="font-bold text-charcoal-800 block mb-1">Dynamically Impacted Events:</span>
+                    <ul className="space-y-1.5 text-charcoal-600">
+                      {delayResult.detailed_impacts?.length ? (
+                        delayResult.detailed_impacts.map((d: any, i: number) => (
+                          <li key={i} className="flex items-start gap-1.5 text-amber-950 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-1.5 shrink-0" />
+                            <span><strong>{d.title}</strong> in {d.venue_area}: pushed +{d.delay_minutes}m ({d.reason})</span>
+                          </li>
+                        ))
+                      ) : (
+                        delayResult.dependent_downstream_events?.map((ev: string, i: number) => (
+                          <li key={i} className="flex items-center gap-1.5 text-amber-950 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+                            <span>{ev} (Cascaded Buffer Shift)</span>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+
+                  <div className="bg-white rounded-xl p-3.5 border border-amber-200">
+                    <span className="font-bold text-charcoal-800 block mb-1">Coordinator Mitigation Plan:</span>
+                    <ul className="space-y-1 text-charcoal-600">
+                      {(delayResult.mitigation_actions || delayResult.suggested_actions)?.map((act: string, i: number) => (
+                        <li key={i} className="flex items-start gap-1.5 text-charcoal-700">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{act}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-3.5 border border-amber-200">
-                  <span className="font-bold text-charcoal-800 block mb-1">Coordinator Mitigation Plan:</span>
-                  <ul className="space-y-1 text-charcoal-600">
-                    {delayResult.suggested_actions?.map((act: string, i: number) => (
-                      <li key={i} className="flex items-start gap-1.5 text-charcoal-700">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                        <span>{act}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {/* Proposed Revised Timetable Preview */}
+                {delayResult.proposed_revisions && delayResult.proposed_revisions.length > 0 && (
+                  <div className="bg-white rounded-xl p-3.5 border border-amber-200 overflow-x-auto">
+                    <span className="font-bold text-charcoal-800 block mb-2">Proposed Run of Show Revision Preview:</span>
+                    <table className="w-full text-left border-collapse text-[11px]">
+                      <thead>
+                        <tr className="border-b border-amber-200 text-charcoal-500 font-semibold">
+                          <th className="py-1 px-2">Ceremony Step</th>
+                          <th className="py-1 px-2">Venue Area</th>
+                          <th className="py-1 px-2">Current Time</th>
+                          <th className="py-1 px-2 text-amber-800 font-bold">Proposed Revised Time</th>
+                          <th className="py-1 px-2">Adjustment</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {delayResult.proposed_revisions.map((rev: any, idx: number) => (
+                          <tr key={idx} className="border-b border-amber-100/60 hover:bg-amber-50/50">
+                            <td className="py-1 px-2 font-medium text-charcoal-900">{rev.title}</td>
+                            <td className="py-1 px-2 text-charcoal-600">{rev.venue_area}</td>
+                            <td className="py-1 px-2 text-charcoal-500 line-through">{rev.current_time}</td>
+                            <td className="py-1 px-2 font-bold text-amber-900">{rev.proposed_time}</td>
+                            <td className="py-1 px-2">
+                              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-mono text-[10px]">
+                                +{rev.shift_minutes}m
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
 
               {/* Publish Revised Schedule Approval */}

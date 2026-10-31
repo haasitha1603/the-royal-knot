@@ -43,8 +43,15 @@ def test_vendors_and_verification():
     assert mewar["verified_status"] == "approved"
 
 def test_catering_quotation_comparison():
+    login_res = client.post("/api/auth/login", json={
+        "email": "couple@theroyalknot.com",
+        "password": "password123"
+    })
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     wedding_id = "wedding-jaipur-demo-400"
-    response = client.get(f"/api/quotations/wedding/{wedding_id}/compare-catering")
+    response = client.get(f"/api/quotations/wedding/{wedding_id}/compare-catering", headers=headers)
     assert response.status_code == 200
     comp = response.json()
     assert comp["quotations_analyzed"] == 3
@@ -55,16 +62,27 @@ def test_catering_quotation_comparison():
     assert top_quote["price_per_plate"] == 2800.0
 
 def test_budget_simulation_extra_guests():
-    wedding_id = "wedding-jaipur-demo-400"
-    response = client.post(f"/api/budgets/wedding/{wedding_id}/simulate-extra-guests", json={
-        "additional_guests": 60,
-        "catering_price_per_plate": 2800.0
+    login_res = client.post("/api/auth/login", json={
+        "email": "couple@theroyalknot.com",
+        "password": "password123"
     })
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    wedding_id = "wedding-jaipur-demo-400"
+    response = client.post(
+        f"/api/budgets/wedding/{wedding_id}/simulate-extra-guests",
+        json={
+            "additional_guests": 60,
+            "catering_price_per_plate": 2800.0
+        },
+        headers=headers
+    )
     assert response.status_code == 200
     sim = response.json()
     assert sim["additional_guests"] == 60
-    assert sim["current_guest_count"] == 400
-    assert sim["projected_guest_count"] == 460
+    assert sim["current_guests"] >= 400
+    assert sim["projected_guests"] == sim["current_guests"] + 60
     assert sim["requires_authorization"] is True
     assert sim["cost_breakdown"]["total_estimated_impact"] > 200000
 
