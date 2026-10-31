@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin-portal
+Disallow: /api/
+
+Sitemap: https://theroyalknot.com/sitemap.xml

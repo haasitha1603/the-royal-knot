@@ -1,0 +1,332 @@
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import {
+  Crown,
+  Menu,
+  X,
+  Sparkles,
+  User,
+  LogOut,
+  ChevronDown,
+  Compass,
+  Building,
+  Users,
+  Calendar,
+  LayoutDashboard,
+  Shield,
+  HelpCircle,
+  Phone
+} from 'lucide-react';
+
+export const Navbar: React.FC = () => {
+  const { user, logout, loginAsRole } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+
+  const isActive = (path: string) => location.pathname === path;
+
+  const handleRoleSwitch = async (role: 'couple' | 'vendor' | 'planner' | 'admin') => {
+    await loginAsRole(role);
+    setRoleDropdownOpen(false);
+    if (role === 'couple') navigate('/dashboard');
+    else if (role === 'vendor') navigate('/vendor-portal');
+    else if (role === 'planner') navigate('/planner-portal');
+    else if (role === 'admin') navigate('/admin-portal');
+  };
+
+  return (
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gold-200/80 shadow-sm transition-all">
+      {/* Top Royal Announcement Bar */}
+      <div className="bg-gradient-to-r from-burgundy-900 via-burgundy-800 to-burgundy-900 text-gold-200 text-[11px] py-1.5 px-4 text-center font-medium tracking-wider flex items-center justify-between">
+        <div className="hidden sm:flex items-center gap-2 mx-auto">
+          <Sparkles className="w-3 h-3 text-gold-400" />
+          <span>Curating India’s Most Exquisite Royal Weddings • Jaipur • Udaipur • Jodhpur</span>
+          <Sparkles className="w-3 h-3 text-gold-400" />
+        </div>
+        
+        {/* Quick Demo Role Switcher */}
+        <div className="relative ml-auto sm:ml-0">
+          <button
+            onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-burgundy-950/70 hover:bg-burgundy-950 text-gold-300 border border-gold-400/30 text-[10px] uppercase font-semibold transition-colors"
+          >
+            <span>Role: {user ? user.role.toUpperCase() : 'DEMO SELECTOR'}</span>
+            <ChevronDown className="w-2.5 h-2.5" />
+          </button>
+
+          {roleDropdownOpen && (
+            <div className="absolute right-0 mt-1 w-48 rounded-xl bg-white text-charcoal-700 shadow-royal-lg border border-gold-300 py-1.5 z-50 text-xs">
+              <div className="px-3 py-1 font-semibold text-[10px] uppercase tracking-wider text-charcoal-400 border-b border-gold-100">
+                Switch Demo Persona
+              </div>
+              <button
+                onClick={() => handleRoleSwitch('couple')}
+                className="w-full text-left px-3 py-1.5 hover:bg-gold-50 flex items-center justify-between"
+              >
+                <span>Couple (Aarav & Meera)</span>
+                <span className="text-[10px] text-burgundy-700 font-bold">Couple</span>
+              </button>
+              <button
+                onClick={() => handleRoleSwitch('vendor')}
+                className="w-full text-left px-3 py-1.5 hover:bg-gold-50 flex items-center justify-between"
+              >
+                <span>Royal Mewar Caterers</span>
+                <span className="text-[10px] text-gold-700 font-bold">Vendor</span>
+              </button>
+              <button
+                onClick={() => handleRoleSwitch('planner')}
+                className="w-full text-left px-3 py-1.5 hover:bg-gold-50 flex items-center justify-between"
+              >
+                <span>Ananya Sharma</span>
+                <span className="text-[10px] text-indigo-700 font-bold">Planner</span>
+              </button>
+              <button
+                onClick={() => handleRoleSwitch('admin')}
+                className="w-full text-left px-3 py-1.5 hover:bg-gold-50 flex items-center justify-between"
+              >
+                <span>Maharaj Digvijay</span>
+                <span className="text-[10px] text-emerald-700 font-bold">Admin</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Navigation Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Brand Logo */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gold-100 via-gold-50 to-ivory-100 border border-gold-400 flex items-center justify-center text-gold-700 shadow-sm group-hover:scale-105 transition-transform ring-4 ring-gold-50">
+              <Crown className="w-6 h-6 text-gold-600 drop-shadow-sm" />
+            </div>
+            <div>
+              <span className="font-serif text-2xl font-bold tracking-tight text-charcoal-800 block group-hover:text-burgundy-800 transition-colors">
+                THE ROYAL KNOT
+              </span>
+              <span className="text-[10px] tracking-[0.25em] uppercase text-gold-600 font-semibold block -mt-1">
+                Luxury Indian Weddings
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Nav Links */}
+          <nav className="hidden lg:flex items-center gap-7 text-xs uppercase font-medium tracking-wider text-charcoal-600">
+            <Link
+              to="/"
+              className={`hover:text-burgundy-700 transition-colors ${
+                isActive('/') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              to="/venues"
+              className={`hover:text-burgundy-700 transition-colors ${
+                isActive('/venues') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              Palace Venues
+            </Link>
+            <Link
+              to="/vendors"
+              className={`hover:text-burgundy-700 transition-colors ${
+                isActive('/vendors') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              Marketplace
+            </Link>
+            <Link
+              to="/destination"
+              className={`hover:text-burgundy-700 transition-colors ${
+                isActive('/destination') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              Destinations
+            </Link>
+            <Link
+              to="/command-centre"
+              className={`hover:text-burgundy-700 transition-colors flex items-center gap-1 ${
+                isActive('/command-centre') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-gold-600 animate-spin" style={{ animationDuration: '6s' }} />
+              <span>Command Centre</span>
+            </Link>
+            <Link
+              to="/how-it-works"
+              className={`hover:text-burgundy-700 transition-colors ${
+                isActive('/how-it-works') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              How It Works
+            </Link>
+            <Link
+              to="/contact"
+              className={`hover:text-burgundy-700 transition-colors ${
+                isActive('/contact') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+              }`}
+            >
+              Concierge
+            </Link>
+          </nav>
+
+          {/* User Actions */}
+          <div className="hidden sm:flex items-center gap-3">
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Link
+                  to={
+                    user.role === 'couple'
+                      ? '/dashboard'
+                      : user.role === 'vendor'
+                      ? '/vendor-portal'
+                      : user.role === 'planner'
+                      ? '/planner-portal'
+                      : '/admin-portal'
+                  }
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ivory-200 border border-gold-300 text-xs font-semibold text-charcoal-800 hover:bg-gold-50 transition-colors"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5 text-gold-700" />
+                  <span>{user.role === 'couple' ? 'Couple Portal' : `${user.role.toUpperCase()} Hub`}</span>
+                </Link>
+
+                <button
+                  onClick={logout}
+                  className="p-2 rounded-xl text-charcoal-400 hover:text-burgundy-700 hover:bg-ivory-200 transition-colors"
+                  title="Logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2.5">
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-charcoal-700 hover:text-burgundy-800 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/onboarding"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-burgundy-700 hover:bg-burgundy-800 text-white text-xs font-semibold uppercase tracking-wider shadow-sm transition-all border border-gold-400/40 hover:scale-105"
+                >
+                  <Crown className="w-3.5 h-3.5 text-gold-300" />
+                  <span>Plan a Wedding</span>
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex lg:hidden items-center">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg text-charcoal-600 hover:text-charcoal-900 hover:bg-ivory-200"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t border-gold-200 bg-white px-4 pt-3 pb-6 space-y-3 shadow-royal-lg animate-in fade-in duration-200">
+          <Link
+            to="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
+          >
+            Home
+          </Link>
+          <Link
+            to="/venues"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
+          >
+            Palace Venues
+          </Link>
+          <Link
+            to="/vendors"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
+          >
+            Marketplace & Vendors
+          </Link>
+          <Link
+            to="/destination"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
+          >
+            Destination Weddings
+          </Link>
+          <Link
+            to="/command-centre"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-burgundy-800 font-bold"
+          >
+            Live Command Centre
+          </Link>
+          <Link
+            to="/how-it-works"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
+          >
+            How It Works
+          </Link>
+          <Link
+            to="/contact"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-sm font-medium text-charcoal-800 hover:text-burgundy-700"
+          >
+            Concierge & Support
+          </Link>
+
+          <div className="pt-3 border-t border-gold-100 flex flex-col gap-2">
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2.5 text-center rounded-xl bg-burgundy-700 text-white font-semibold text-xs uppercase"
+                >
+                  My Wedding Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="py-2 text-center text-xs text-charcoal-500 hover:text-burgundy-700"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 text-center text-xs font-semibold uppercase text-charcoal-700"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/onboarding"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2.5 text-center rounded-xl bg-burgundy-700 text-white font-semibold text-xs uppercase"
+                >
+                  Plan a Wedding
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};

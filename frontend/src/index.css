@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-ivory text-charcoal-700;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  }
+}
+
+/* Luxury gold borders, metallic gradient highlights */
+.border-gold-gradient {
+  border-image: linear-gradient(to right, #C5A059, #F3E5AB, #C5A059) 1;
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #B38F30 0%, #D4AF37 50%, #8C6F23 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #C5A059 0%, #E5C378 50%, #B38F30 100%);
+}
+
+.bg-burgundy-gradient {
+  background: linear-gradient(135deg, #800020 0%, #9B111E 50%, #67001A 100%);
+}
+
+/* Custom delicate luxury scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B38F30;
+}
