@@ -98,10 +98,10 @@ export const Navbar: React.FC = () => {
 
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Brand Logo with User Provided Wedding Silhouette Logo & Grand Fancy Cursive Font */}
-          <Link to="/" className="flex items-center gap-3.5 group">
-            <div className="w-12 h-12 rounded-full overflow-hidden border border-gold-400 shadow-sm group-hover:scale-105 transition-transform ring-4 ring-gold-50/80 shrink-0 bg-white p-0.5">
+        <div className="flex items-center justify-between h-16 sm:h-18">
+          {/* Brand Logo with User Provided Wedding Silhouette Logo & Cursive Brand Name */}
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-gold-400 shadow-sm group-hover:scale-105 transition-transform ring-2 ring-gold-50 shrink-0 bg-white p-0.5">
               <img
                 src="/royal-knot-logo.png"
                 alt="The Royal Knot"
@@ -109,21 +109,18 @@ export const Navbar: React.FC = () => {
               />
             </div>
             <div>
-              <span className="font-cursive text-3xl font-bold text-charcoal-800 block group-hover:text-burgundy-800 transition-colors leading-none pt-0.5">
+              <span className="font-cursive text-2xl font-bold text-charcoal-800 block group-hover:text-burgundy-800 transition-colors leading-none">
                 The Royal Knot
-              </span>
-              <span className="text-[8px] tracking-[0.3em] uppercase text-gold-700/80 font-medium block mt-0.5">
-                Luxury Indian Weddings
               </span>
             </div>
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs uppercase font-medium tracking-wider text-charcoal-600">
+          {/* Desktop Nav Links (Optimized text size & spacing) */}
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 text-[11px] uppercase font-medium tracking-normal xl:tracking-wider text-charcoal-600">
             <Link
               to="/"
               className={`hover:text-burgundy-700 transition-colors ${
-                isActive('/') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
               Home
@@ -131,7 +128,7 @@ export const Navbar: React.FC = () => {
             <Link
               to="/venues"
               className={`hover:text-burgundy-700 transition-colors ${
-                isActive('/venues') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/venues') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
               Palace Venues
@@ -139,7 +136,7 @@ export const Navbar: React.FC = () => {
             <Link
               to="/vendors"
               className={`hover:text-burgundy-700 transition-colors ${
-                isActive('/vendors') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/vendors') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
               Marketplace
@@ -147,7 +144,7 @@ export const Navbar: React.FC = () => {
             <Link
               to="/destination"
               className={`hover:text-burgundy-700 transition-colors ${
-                isActive('/destination') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/destination') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
               Destinations
@@ -155,7 +152,7 @@ export const Navbar: React.FC = () => {
             <Link
               to="/marriage-registration"
               className={`hover:text-burgundy-700 transition-colors ${
-                isActive('/marriage-registration') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/marriage-registration') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
               Marriage Registration
@@ -163,16 +160,16 @@ export const Navbar: React.FC = () => {
             <Link
               to="/command-centre"
               className={`hover:text-burgundy-700 transition-colors flex items-center gap-1 ${
-                isActive('/command-centre') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/command-centre') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-gold-600 animate-spin" style={{ animationDuration: '6s' }} />
+              <Sparkles className="w-3 h-3 text-gold-600 animate-spin" style={{ animationDuration: '6s' }} />
               <span>Command Centre</span>
             </Link>
             <Link
               to="/how-it-works"
               className={`hover:text-burgundy-700 transition-colors ${
-                isActive('/how-it-works') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/how-it-works') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
               How It Works
@@ -180,7 +177,7 @@ export const Navbar: React.FC = () => {
             <Link
               to="/contact"
               className={`hover:text-burgundy-700 transition-colors ${
-                isActive('/contact') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-1' : ''
+                isActive('/contact') ? 'text-burgundy-800 font-bold border-b-2 border-gold-400 pb-0.5' : ''
               }`}
             >
               Concierge
@@ -188,7 +185,7 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* User Actions */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2.5 shrink-0">
             {user ? (
               <div className="flex items-center gap-2">
                 <Link
@@ -201,7 +198,7 @@ export const Navbar: React.FC = () => {
                       ? '/planner-portal'
                       : '/admin-portal'
                   }
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ivory-200 border border-gold-300 text-xs font-semibold text-charcoal-800 hover:bg-gold-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ivory-200 border border-gold-300 text-[11px] font-semibold text-charcoal-800 hover:bg-gold-50 transition-colors"
                 >
                   <LayoutDashboard className="w-3.5 h-3.5 text-gold-700" />
                   <span>{user.role === 'couple' ? 'Couple Portal' : `${user.role.toUpperCase()} Hub`}</span>
@@ -209,25 +206,25 @@ export const Navbar: React.FC = () => {
 
                 <button
                   onClick={logout}
-                  className="p-2 rounded-xl text-charcoal-400 hover:text-burgundy-700 hover:bg-ivory-200 transition-colors"
+                  className="p-1.5 rounded-xl text-charcoal-400 hover:text-burgundy-700 hover:bg-ivory-200 transition-colors"
                   title="Logout"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-charcoal-700 hover:text-burgundy-800 transition-colors"
+                  className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-charcoal-700 hover:text-burgundy-800 transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/onboarding"
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-burgundy-700 hover:bg-burgundy-800 text-white text-xs font-semibold uppercase tracking-wider shadow-sm transition-all border border-gold-400/40 hover:scale-105"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-burgundy-700 hover:bg-burgundy-800 text-white text-[11px] font-semibold uppercase tracking-wider shadow-sm transition-all border border-gold-400/40 hover:scale-105"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-gold-300" />
+                  <Sparkles className="w-3 h-3 text-gold-300" />
                   <span>Plan a Wedding</span>
                 </Link>
               </div>

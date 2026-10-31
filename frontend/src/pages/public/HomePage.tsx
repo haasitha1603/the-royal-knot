@@ -104,12 +104,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
           </h1>
 
           {/* Tagline */}
-          <p className="font-serif italic text-xl sm:text-2xl text-charcoal-600 max-w-3xl mx-auto mb-6 font-medium">
+          <p className="font-serif italic text-xl sm:text-2xl text-charcoal-600 max-w-3xl mx-auto mb-10 font-medium">
             “Every detail connected. Every moment managed. Every wedding unforgettable.”
-          </p>
-
-          <p className="text-sm sm:text-base text-charcoal-500 max-w-2xl mx-auto mb-10 leading-relaxed font-sans">
-            Palace venue discovery, bespoke quotation intelligence, staged escrow milestones, and a live wedding day command centre.
           </p>
 
           {/* Hero CTAs */}
