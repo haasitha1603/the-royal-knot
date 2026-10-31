@@ -18,8 +18,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('royal_knot_token'));
-  const [activeWeddingId, setActiveWeddingId] = useState<string>('wedding-jaipur-demo-400');
+  const [activeWeddingId, setActiveWeddingIdState] = useState<string>(() => {
+    return localStorage.getItem('royal_knot_active_wedding_id') || 'wedding-jaipur-demo-400';
+  });
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const setActiveWeddingId = (id: string) => {
+    setActiveWeddingIdState(id);
+    localStorage.setItem('royal_knot_active_wedding_id', id);
+  };
 
   useEffect(() => {
     async function loadUser() {

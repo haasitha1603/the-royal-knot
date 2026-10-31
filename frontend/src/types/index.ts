@@ -25,6 +25,7 @@ export interface Wedding {
   ceremony_tradition: string;
   status: string;
   is_demo: boolean;
+  primary_venue_name?: string;
 }
 
 export interface WeddingFunction {

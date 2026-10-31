@@ -21,6 +21,13 @@ import {
 
 export const GuestManagementPage: React.FC = () => {
   const { activeWeddingId } = useAuth();
+  const activeWedding = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('royal_knot_active_wedding') || 'null');
+    } catch (e) {
+      return null;
+    }
+  })();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [tables, setTables] = useState<SeatingTable[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -101,9 +108,9 @@ export const GuestManagementPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-xs font-bold uppercase tracking-wider text-gold-700 bg-gold-50 px-3 py-0.5 rounded-full border border-gold-200">
-                Hospitality & Protocol
+                Hospitality & Protocol • {activeWedding?.couple_names || 'Aarav Singhania & Meera Kapoor'}
               </span>
-              <span className="text-xs text-charcoal-400">400 Guests Basis</span>
+              <span className="text-xs text-charcoal-400">{activeWedding?.estimated_guests || 400} Guests Basis</span>
             </div>
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal-900">
               Guest Architect & Visual Seating

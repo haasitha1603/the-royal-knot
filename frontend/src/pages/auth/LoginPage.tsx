@@ -46,15 +46,18 @@ export const LoginPage: React.FC = () => {
         <div className="bg-white rounded-3xl border border-gold-300 p-8 sm:p-10 shadow-royal">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-full overflow-hidden border border-gold-400 mx-auto mb-3 shadow-sm ring-4 ring-gold-50">
+            <div className="w-16 h-16 rounded-full overflow-hidden border border-gold-400 mx-auto mb-3 shadow-sm ring-4 ring-gold-50 bg-white p-1">
               <img
-                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+                src="/royal-knot-logo.png"
                 alt="The Royal Knot"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
-            <span className="text-[10px] uppercase tracking-widest font-bold text-gold-700">
-              The Royal Knot Portal
+            <span className="font-cursive text-3xl font-bold text-burgundy-900 block leading-tight">
+              The Royal Knot
+            </span>
+            <span className="text-[9px] uppercase tracking-widest font-bold text-gold-700 block -mt-1">
+              Wedding Portal
             </span>
             <h1 className="font-serif text-3xl font-bold text-charcoal-900 mt-1">
               Sign In to Your Wedding

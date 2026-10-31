@@ -8,20 +8,21 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
           {/* Brand Info */}
+          {/* Brand Info with Provided Logo & Fancy Cursive Typography */}
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full overflow-hidden border border-gold-400 flex items-center justify-center shadow-sm shrink-0">
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-gold-400 flex items-center justify-center shadow-sm shrink-0 bg-white p-0.5">
                 <img
-                  src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
-                  alt="The Royal Knot insignia"
-                  className="w-full h-full object-cover"
+                  src="/royal-knot-logo.png"
+                  alt="The Royal Knot"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div>
-                <span className="font-serif text-2xl font-bold tracking-tight text-charcoal-800 block">
-                  THE ROYAL KNOT
+                <span className="font-cursive text-3xl font-bold text-charcoal-800 block leading-none pt-0.5">
+                  The Royal Knot
                 </span>
-                <span className="text-[8.5px] tracking-[0.3em] uppercase text-gold-700 font-medium block">
+                <span className="text-[8px] tracking-[0.3em] uppercase text-gold-700 font-medium block mt-0.5">
                   Luxury Indian Weddings
                 </span>
               </div>

@@ -15,10 +15,12 @@ import {
   X,
   Phone,
   Mail,
-  Sparkles
+  Sparkles,
+  Hotel
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import { StayPicker } from '../../components/ui/StayPicker';
 
 // Fix Leaflet default marker icon in bundlers
 const customIcon = new L.Icon({
@@ -38,6 +40,7 @@ export const VenuesPage: React.FC = () => {
   const [cityFilter, setCityFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVenueForSlot, setSelectedVenueForSlot] = useState<Venue | null>(null);
+  const [selectedVenueForRoomBlock, setSelectedVenueForRoomBlock] = useState<Venue | null>(null);
 
   useEffect(() => {
     async function fetchVenues() {
@@ -243,14 +246,24 @@ export const VenuesPage: React.FC = () => {
                       </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setSelectedVenueForSlot(venue)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-burgundy-700 hover:bg-burgundy-800 text-white text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
-                    >
-                      <Calendar className="w-3.5 h-3.5 text-gold-300" />
-                      <span>Book Walkthrough</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVenueForRoomBlock(venue)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-ivory-100 hover:bg-gold-100 text-charcoal-800 text-xs font-semibold uppercase tracking-wider border border-gold-300 transition-colors shadow-sm"
+                      >
+                        <Hotel className="w-3.5 h-3.5 text-gold-600" />
+                        <span>Room Block</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVenueForSlot(venue)}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-burgundy-700 hover:bg-burgundy-800 text-white text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
+                      >
+                        <Calendar className="w-3.5 h-3.5 text-gold-300" />
+                        <span>Walkthrough</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -258,7 +271,7 @@ export const VenuesPage: React.FC = () => {
           </div>
         )}
 
-        {/* Slot Picker Modal */}
+        {/* Slot Picker Modal for Walkthrough */}
         {selectedVenueForSlot && (
           <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-charcoal-900/60 backdrop-blur-sm">
             <div className="relative w-full max-w-xl">
@@ -272,6 +285,28 @@ export const VenuesPage: React.FC = () => {
                 entityName={selectedVenueForSlot.name}
                 onSlotSelected={() => {
                   setTimeout(() => setSelectedVenueForSlot(null), 2500);
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* StayPicker Room Block Modal */}
+        {selectedVenueForRoomBlock && (
+          <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-charcoal-900/60 backdrop-blur-sm">
+            <div className="relative w-full max-w-xl">
+              <button
+                onClick={() => setSelectedVenueForRoomBlock(null)}
+                className="absolute top-4 right-4 z-10 p-1.5 rounded-full bg-white text-charcoal-400 hover:text-charcoal-700 border border-gold-200 shadow-sm"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <StayPicker
+                venueName={selectedVenueForRoomBlock.name}
+                defaultRooms={30}
+                defaultGuests={75}
+                onConfirm={() => {
+                  setTimeout(() => setSelectedVenueForRoomBlock(null), 2000);
                 }}
               />
             </div>

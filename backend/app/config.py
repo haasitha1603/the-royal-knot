@@ -1,5 +1,7 @@
+import json
 import os
 from typing import List
+
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -17,13 +19,23 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./royal_knot.db")
     
     # CORS
-    CORS_ORIGINS: List[str] = [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:3000",
-        "*"
-    ]
+    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000,http://localhost:4173"
+
+    def get_cors_origins(self) -> List[str]:
+        value = self.CORS_ORIGINS
+        if isinstance(value, list):
+            return value
+        if not value:
+            return []
+        stripped = value.strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            try:
+                parsed = json.loads(stripped)
+                if isinstance(parsed, list):
+                    return parsed
+            except json.JSONDecodeError:
+                pass
+        return [item.strip() for item in stripped.split(",") if item.strip()]
     
     # Brand & Business Information
     PLATFORM_NAME: str = "The Royal Knot"

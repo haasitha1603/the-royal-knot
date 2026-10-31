@@ -141,6 +141,7 @@ export const DestinationPage: React.FC = () => {
           </div>
 
           <StayPicker
+            venueName={`Luxury Palace Suites in ${selectedDestination}`}
             defaultGuests={60}
             defaultRooms={25}
             onConfirm={(details) => {

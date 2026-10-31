@@ -70,6 +70,9 @@ export default {
       fontFamily: {
         serif: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
         sans: ['"Outfit"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        cursive: ['"Great Vibes"', '"Alex Brush"', '"Pinyon Script"', 'cursive'],
+        hermiona: ['"Great Vibes"', '"Alex Brush"', '"Pinyon Script"', 'cursive'],
+        royal: ['"Cinzel Decorative"', '"Cormorant Garamond"', 'serif'],
       },
       boxShadow: {
         'royal': '0 4px 20px -2px rgba(197, 160, 89, 0.15), 0 2px 6px -1px rgba(128, 0, 32, 0.06)',

@@ -17,19 +17,22 @@ export const WaitlistPage: React.FC = () => {
     <div className="bg-ivory min-h-screen py-16 flex items-center justify-center">
       <div className="max-w-xl w-full mx-auto px-4">
         <div className="bg-white rounded-3xl border border-gold-300 p-8 sm:p-10 shadow-royal text-center">
-          <div className="w-14 h-14 rounded-full overflow-hidden border border-gold-400 mx-auto mb-4 shadow-sm ring-8 ring-gold-50">
+          <div className="w-16 h-16 rounded-full overflow-hidden border border-gold-400 mx-auto mb-3 shadow-sm ring-4 ring-gold-50 bg-white p-1">
             <img
-              src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+              src="/royal-knot-logo.png"
               alt="The Royal Knot"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
 
-          <span className="text-xs uppercase tracking-widest font-bold text-burgundy-700 bg-burgundy-50 px-3 py-1 rounded-full border border-burgundy-200">
-            Exclusive Heritage Access
+          <span className="font-cursive text-3xl font-bold text-burgundy-900 block leading-tight">
+            The Royal Knot
+          </span>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-gold-700 block mb-3">
+            Exclusive Heritage Registry
           </span>
 
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal-900 mt-3 mb-2">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal-900 mt-1 mb-2">
             Join The Royal Knot Private Registry
           </h1>
 
@@ -108,21 +111,21 @@ export const ThankYouPage: React.FC = () => {
     <div className="bg-ivory min-h-screen py-20 flex items-center justify-center">
       <div className="max-w-lg w-full mx-auto px-4 text-center">
         <div className="bg-white rounded-3xl border border-gold-300 p-8 sm:p-12 shadow-royal">
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-400 mx-auto mb-6 shadow-sm ring-8 ring-gold-100/50">
+          <div className="w-20 h-20 rounded-full overflow-hidden border border-gold-400 mx-auto mb-4 shadow-sm ring-4 ring-gold-50 bg-white p-1">
             <img
-              src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=200&q=80"
+              src="/royal-knot-logo.png"
               alt="The Royal Knot"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
 
-          <p className="text-xs uppercase tracking-widest font-bold text-gold-600 mb-1">
-            With Immense Honor
-          </p>
-
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal-900 mb-3 tracking-tight">
-            THE ROYAL KNOT
+          <h1 className="font-cursive text-5xl sm:text-6xl font-bold text-burgundy-900 mb-2 leading-tight">
+            The Royal Knot
           </h1>
+
+          <p className="text-[11px] uppercase tracking-widest font-bold text-gold-700 mb-3">
+            With Immense Honor & Gratitude
+          </p>
 
           <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto my-3" />
 

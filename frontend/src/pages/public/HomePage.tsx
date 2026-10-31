@@ -31,7 +31,13 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
   const { user, activeWeddingId } = useAuth();
-  const [wedding, setWedding] = useState<Wedding | null>(null);
+  const [wedding, setWedding] = useState<Wedding | null>(() => {
+    const cached = localStorage.getItem('royal_knot_active_wedding');
+    if (cached) {
+      try { return JSON.parse(cached); } catch (e) {}
+    }
+    return null;
+  });
   const [budget, setBudget] = useState<BudgetOverview | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -45,7 +51,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onReopenCurtain }) => {
           api.getTasks(activeWeddingId),
           api.getNotifications()
         ]);
-        setWedding(wData);
+        const cached = localStorage.getItem('royal_knot_active_wedding');
+        if (cached) {
+          try {
+            setWedding(JSON.parse(cached));
+          } catch (e) {
+            setWedding(wData);
+          }
+        } else {
+          setWedding(wData);
+        }
         setBudget(bData);
         setTasks(tData);
         setNotifications(nData);
