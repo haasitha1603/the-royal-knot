@@ -48,18 +48,24 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({ onEnter, force
       className="fixed inset-0 z-[100] overflow-hidden select-none bg-[#FAF7F2]"
     >
       {/* =========================================================================
-          STATE 2: MINIMAL ROYAL KNOT BRAND REVEAL SCREEN
-          Positioned directly behind the curtains.
-          Contains ONLY:
-          1. Large, elegant THE ROYAL KNOT title in royal cursive / Hermiona typography.
-          2. A single button in one corner: "Visit Home Page".
-          Nothing else: No descriptions, no cards, no navigation, no stats.
+          STATE 2: THE ROYAL KNOT REVEAL SCREEN (USER UPLOADED GRAPHIC)
+          Appears once the curtains open.
+          Features the tied-back satin curtains with floral bouquet ties and the
+          royal gold calligraphy "The Royal Knot" with wedding rings emblem.
+          In the top right corner: "Visit Home Page" button.
           ========================================================================= */}
       <div
-        className={`absolute inset-0 z-0 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-[#FFFDF9] via-[#FAF6EE] to-[#F5ECE0] transition-opacity duration-700 ${
+        className={`absolute inset-0 z-0 flex items-center justify-center bg-[#FAF6EE] transition-opacity duration-700 ${
           phase === 'revealed' || phase === 'parting' ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
+        {/* Full-bleed opened curtains graphic with golden calligraphy */}
+        <img
+          src="/royal-knot-opened-curtain.png"
+          alt="The Royal Knot"
+          className="w-full h-full object-cover object-center select-none pointer-events-none"
+        />
+
         {/* Single Corner Button: Visit Home Page */}
         <div
           className={`absolute top-6 right-6 sm:top-10 sm:right-10 z-20 transition-all duration-500 ${
@@ -68,21 +74,12 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({ onEnter, force
         >
           <button
             onClick={handleVisitHomePage}
-            className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-burgundy-700 hover:bg-burgundy-800 text-white font-medium text-xs sm:text-sm uppercase tracking-widest shadow-royal border border-gold-400/50 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+            className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-burgundy-700 hover:bg-burgundy-800 text-white font-medium text-xs sm:text-sm uppercase tracking-widest shadow-royal border border-gold-400/50 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-sm"
             aria-label="Visit Home Page"
           >
             <span>Visit Home Page</span>
             <ArrowRight className="w-4 h-4 text-gold-300 transition-transform group-hover:translate-x-1" />
           </button>
-        </div>
-
-        {/* Minimal Central Title Focus */}
-        <div className="text-center px-4 max-w-4xl">
-          <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto mb-6 opacity-75" />
-          <h1 className="font-cursive text-6xl sm:text-8xl md:text-9xl font-bold tracking-wide text-charcoal-900 leading-none drop-shadow-sm">
-            The Royal Knot
-          </h1>
-          <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto mt-6 opacity-75" />
         </div>
       </div>
 
